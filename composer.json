@@ -1,0 +1,23 @@
+{
+  "name": "sterling/repository",
+  "description": "Common queries wrapped up in a base repository class to be extended",
+  "type": "library",
+  "require": {
+    "illuminate/view": "^5.1",
+    "illuminate/support": "^5.1",
+    "illuminate/contracts": "^5.1"
+  },
+  "autoload": {
+    "psr-0": {
+      "Sterling\\CrudController": "src/"
+    }
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tom Sinclair",
+      "email": "tsinclair@sterlingsolutions.co.uk"
+    }
+  ],
+  "minimum-stability": "dev"
+}
