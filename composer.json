@@ -9,7 +9,7 @@
   },
   "autoload": {
     "psr-0": {
-      "Sterling\\CrudController": "src/"
+      "Sterling\\Repository": "src/"
     }
   },
   "license": "MIT",
