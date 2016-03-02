@@ -1,6 +1,6 @@
 <?php
 
-namespace Sterling\Repository\Traits;
+namespace Sinclair\Repository\Traits;
 
 trait EloquentRepository
 {

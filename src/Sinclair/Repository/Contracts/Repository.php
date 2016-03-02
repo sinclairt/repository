@@ -1,4 +1,4 @@
-<?php namespace Sterling\Repository\Contracts;
+<?php namespace Sinclair\Repository\Contracts;
 
 interface Repository
 {

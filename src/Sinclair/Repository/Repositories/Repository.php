@@ -1,10 +1,10 @@
 <?php
 
-namespace Sterling\Repository\Repositories;
+namespace Sinclair\Repository\Repositories;
 
-use Sterling\Repository\Contracts\Repository as RepositoryInterface;
-use Sterling\Repository\Traits\EloquentRepository;
-use Sterling\Repository\Traits\EloquentSoftDeleteRepository;
+use Sinclair\Repository\Contracts\Repository as RepositoryInterface;
+use Sinclair\Repository\Traits\EloquentRepository;
+use Sinclair\Repository\Traits\EloquentSoftDeleteRepository;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class Repository implements RepositoryInterface

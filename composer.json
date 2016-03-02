@@ -1,5 +1,5 @@
 {
-  "name": "sterling/repository",
+  "name": "sinclair/repository",
   "description": "Common queries wrapped up in a base repository class to be extended",
   "type": "library",
   "require": {
@@ -9,14 +9,14 @@
   },
   "autoload": {
     "psr-0": {
-      "Sterling\\Repository": "src/"
+      "Sinclair\\Repository": "src/"
     }
   },
   "license": "MIT",
   "authors": [
     {
       "name": "Tom Sinclair",
-      "email": "tsinclair@sterlingsolutions.co.uk"
+      "email": "tom.sinclair31@gmail.com"
     }
   ],
   "minimum-stability": "dev"
