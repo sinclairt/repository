@@ -208,4 +208,16 @@ interface Repository
      * @return Builder
      */
     public function getQuery();
+
+    /**
+     * @param Model $model
+     *
+     * @return $this
+     */
+    public function setModel(Model $model);
+
+    /**
+     * @return Model
+     */
+    public function getModel();
 }
