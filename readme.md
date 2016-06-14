@@ -1,28 +1,52 @@
-# Sterling Repository
+# Sinclair Repository
 
 Common queries wrapped up into a class to be extended.
 
 ### Installation
 
-Add the following repository to your ``` composer.json ```. You will have access as long as you belong to the Sterling team on Bitbucket.
+Add the following repository to your ``` composer.json ```. You will have access as long as you belong to the WTBI team on Bitbucket.
 
 ``` sh
   "repositories": [
     {
       "type": "composer",
-      "url": "http://satis.sterling-design.co.uk"
+      "url": "http://satis.wtbidev.co.uk"
     }
   ]
 ```
 
-``` composer require sterling/repository```
+``` composer require sinclair/repository```
 
 ``` composer install ```
 
 ### Usage
 
-All you need to do is create a repository that extends ``` Sterling\Repository\Repositories\Repository ``` and implements the ``` Sterling\Repository\Contracts\Repository ``` and off you go you have access to all the goodness of the repository!
+All you need to do is create a repository that extends ``` Sinclair\Repository\Repositories\Repository ``` and implements the ``` Sinclair\Repository\Contracts\Repository ``` and off you go you have access to all the goodness of the repository!
 
-Alternatively, you can use either of the two traits ``` Sterling\Repository\Traits\EloquentRepository ``` or ``` Sterling\Repository\Traits\EloquentSoftDeleteRepository ```, add a protected ``` $model ``` variable in your class and set it to your model class and away you go!
+This is a list of all the methods available to you
+
+    sort
+    getById
+    getAll
+    getAllPaginate
+    add
+    getByName
+    update
+    destroy
+    save
+    firstOrCreate
+    getArrayForSelect
+    getArrayForSelectWithTrashed
+    onlyFillable
+    getByIdWithTrashed
+    getAllWithTrashed
+    getAllPaginatedWithTrashed
+    restore
+    search
+    searchWithTrashed
+    filter
+    filterPaginated
+    setQuery
+    getQuery
 
 F.Y.I All of the queries use Laravel's query builder methods, so be sure that your model class has access to these!

@@ -1,13 +1,35 @@
-<?php namespace Sinclair\Repository\Contracts;
+<?php
 
+namespace Sinclair\Repository\Contracts;
+
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
+use Sinclair\Repository\Traits\Filterable;
+
+/**
+ * Interface Repository
+ * @package Sinclair\Repository\Contracts
+ */
 interface Repository
 {
+
     /**
-     * @param $id
+     * @param $query
+     * @param string|null $orderBy
+     * @param string $direction
      *
      * @return mixed
      */
-    public function getById($id);
+    public function sort( &$query, $orderBy, $direction );
+
+
+    /**
+     * @param int $id
+     *
+     * @return Model
+     */
+    public function getById( $id );
 
     /**
      * @param array $columns
@@ -15,110 +37,174 @@ interface Repository
      * @param null $orderBy
      * @param string $direction
      *
-     * @return mixed
+     * @return Collection
      */
-    public function getAll($columns = [ '*' ], $orderBy = null, $direction = 'asc');
+    public function getAll( $columns = [ '*' ], $orderBy = null, $direction = 'asc' );
 
     /**
      * @param int $rows
-     *
      * @param null $orderBy
      * @param string $direction
      *
-     * @return mixed
-     */
-    public function getAllPaginate($rows = 15, $orderBy = null, $direction = 'asc');
-
-    /**
-     * @param $attributes
+     * @param array $columns
+     * @param string $pageName
      *
-     * @return null
+     * @return LengthAwarePaginator
      */
-    public function add($attributes);
+    public function getAllPaginate( $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' );
 
     /**
-     * @param $name
+     * @param array $attributes
      *
-     * @return mixed
+     * @return Model
      */
-    public function getByName($name);
+    public function add( $attributes );
 
     /**
-     * @param $attributes
-     * @param $model
+     * @param string $name
      *
-     * @return null
+     * @return Model|null mixed
      */
-    public function update($attributes, $model);
+    public function getByName( $name );
 
     /**
-     * @param $model
-     */
-    public function destroy($model);
-
-    /**
-     * @param $attributes
-     * @param null $model
+     * @param array $attributes
+     * @param Model $model
      *
-     * @return null
+     * @return Model
      */
-    public function save($attributes, $model = null);
+    public function update( $attributes, $model );
 
     /**
-     * @param $attributes
+     * @param Model $model
      *
-     * @return mixed
+     * @return bool
      */
-    public function firstOrCreate($attributes);
+    public function destroy( $model );
+
+    /**
+     * @param array$attributes
+     * @param Model|null $model
+     *
+     * @return Model
+     */
+    public function save( $attributes, $model = null );
+
+    /**
+     * @param array $attributes
+     *
+     * @return Model mixed
+     */
+    public function firstOrCreate( $attributes );
 
     /**
      * @param string $value
      * @param string $key
      *
-     * @return mixed
+     * @return array
      */
-    public function getArrayForSelect($value = 'name', $key = 'id');
+    public function getArrayForSelect( $value = 'name', $key = 'id' );
 
     /**
-     * @param $attributes
-     * @param $model
-     */
-    public function onlyFillable($attributes, $model);
-
-    /**
-     * @param $id
+     * @param string $value
+     * @param string $key
      *
-     * @return mixed
+     * @return array
      */
-    public function getByIdWithTrashed($id);
+    public function getArrayForSelectWithTrashed( $value = 'name', $key = 'id' );
+
+    /**
+     * @param array $attributes
+     * @param Model $model
+     *
+     * @return array
+     */
+    public function onlyFillable( $attributes, $model );
+
+    /**
+     * @param int $id
+     *
+     * @return Model
+     */
+    public function getByIdWithTrashed( $id );
+
+    /**
+     * @param array $columns
+     * @param null $orderBy
+     * @param string $direction
+     *
+     * @return Collection
+     */
+    public function getAllWithTrashed( $columns = [ '*' ], $orderBy = null, $direction = 'asc' );
 
     /**
      * @param int $rows
      * @param null $orderBy
      * @param string $direction
      *
-     * @return mixed
+     * @param array $columns
+     * @param string $pageName
+     *
+     * @return LengthAwarePaginator
      */
-    public function getAllPaginatedWithTrashed($rows = 15, $orderBy = null, $direction = 'asc');
+    public function getAllPaginatedWithTrashed( $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' );
 
     /**
-     * @param $model
+     * @param Model $model
      *
-     * @return mixed
+     * @return Model
      */
-    public function restore($model);
+    public function restore( $model );
 
     /**
-     * @param $search
+     * @param string $search
      *
-     * @return mixed
+     * @return LengthAwarePaginator
      */
-    public function search($search);
+    public function search( $search );
 
     /**
-     * @param $search
+     * @param string $search
      *
-     * @return mixed
+     * @return LengthAwarePaginator
      */
-    public function searchWithTrashed($search);
+    public function searchWithTrashed( $search );
+
+    /**
+     * @param Request $request
+     * @param string|null $orderBy
+     * @param string $direction
+     * @param array $columns
+     *
+     * @param bool $search
+     *
+     * @return Collection
+     */
+    public function filter( Request $request, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $search = true );
+
+    /**
+     * @param Request $request
+     * @param int $rows
+     * @param string|null $orderBy
+     * @param string $direction
+     * @param array $columns
+     * @param string $paginationName
+     *
+     * @param bool $search
+     *
+     * @return LengthAwarePaginator
+     */
+    public function filterPaginated( Request $request, $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $paginationName = 'page', $search = true );
+
+    /**
+     * @param mixed $query
+     *
+     * @return Filterable
+     */
+    public function setQuery( $query );
+
+    /**
+     * @return Builder
+     */
+    public function getQuery();
 }
