@@ -100,12 +100,22 @@ trait EloquentSoftDeleteRepository
      * @param string $value
      * @param string $key
      *
+     * @param string $callback
+     *
      * @return array
      */
-    public function getArrayForSelectWithTrashed( $value = 'name', $key = 'id' )
+    public function getArrayForSelectWithTrashed( $value = 'name', $key = 'id', $callback = 'ucwords' )
     {
-        return $this->getAllWithTrashed([ '*' ], $value)
-                    ->lists($value, $key)
-                    ->toArray();
+        $data = $this->getAllWithTrashed([ '*' ], $value)
+                     ->pluck($value, $key)
+                     ->toArray();
+
+        if ( !is_null($callback) )
+            array_walk($data, function ( &$item ) use ( $callback )
+            {
+                $item = call_user_func_array($callback, [ $item ]);
+            });
+
+        return $data;
     }
 }

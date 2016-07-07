@@ -101,18 +101,20 @@ interface Repository
     /**
      * @param string $value
      * @param string $key
+     * @param string $callback
      *
      * @return array
      */
-    public function getArrayForSelect( $value = 'name', $key = 'id' );
+    public function getArrayForSelect( $value = 'name', $key = 'id', $callback = 'ucwords' );
 
     /**
      * @param string $value
      * @param string $key
+     * @param string $callback
      *
      * @return array
      */
-    public function getArrayForSelectWithTrashed( $value = 'name', $key = 'id' );
+    public function getArrayForSelectWithTrashed( $value = 'name', $key = 'id', $callback = 'ucwords' );
 
     /**
      * @param array $attributes

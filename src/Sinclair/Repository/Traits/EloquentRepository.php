@@ -131,13 +131,23 @@ trait EloquentRepository
      * @param string $value
      * @param string $key
      *
+     * @param string $callback
+     *
      * @return array
      */
-    public function getArrayForSelect( $value = 'name', $key = 'id' )
+    public function getArrayForSelect( $value = 'name', $key = 'id', $callback = 'ucwords' )
     {
-        return $this->getAll()
-                    ->lists($value, $key)
-                    ->toArray();
+        $data = $this->getAll()
+                     ->pluck($value, $key)
+                     ->toArray();
+
+        if ( !is_null($callback) )
+            array_walk($data, function ( &$item ) use ( $callback )
+            {
+                $item = call_user_func_array($callback, [ $item ]);
+            });
+
+        return $data;
     }
 
     /**
