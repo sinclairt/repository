@@ -31,13 +31,13 @@ trait Filterable
      */
     public function filter( Request $request, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $search = true )
     {
-        $this->setQuery($request->get('trashed') == 1 ? $this->getModel()
+        $this->setQuery($request->input('trashed') == 1 ? $this->getModel()
                                                              ->withTrashed() : $this->getModel());
 
         foreach ( $request->except('_token') as $key => $value )
             $this->{'filter' . studly_case($key)}($request, $search);
 
-        return $this->sort($this->getQuery(), $orderBy, $direction)
+        return $this->sort($this->query, $orderBy, $direction)
                     ->get($columns);
     }
 
@@ -55,13 +55,13 @@ trait Filterable
      */
     public function filterPaginated( Request $request, $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $paginationName = 'page', $search = true )
     {
-        $this->setQuery($request->get('trashed') == 1 ? $this->getModel()
+        $this->setQuery($request->input('trashed') == 1 ? $this->getModel()
                                                              ->withTrashed() : $this->getModel());
 
         foreach ( $request->except('_token') as $key => $value )
             $this->{'filter' . studly_case($key)}($request, $search);
 
-        return $this->sort($this->getQuery(), $orderBy, $direction)
+        return $this->sort($this->query, $orderBy, $direction)
                     ->paginate($rows, $columns, $paginationName);
     }
 
@@ -79,7 +79,7 @@ trait Filterable
 
             if ( $this->filterIsset($request, $field) )
                 $this->setQuery($this->getQuery()
-                                     ->$name($request->get($field), $request->get('trashed', 0) == 1, array_pop($arguments)));
+                                     ->$name($request->input($field), $request->input('trashed', 0) == 1, array_pop($arguments)));
         }
     }
 
@@ -91,7 +91,7 @@ trait Filterable
      */
     private function filterIsset( Request $request, $field )
     {
-        return in_array($field, $this->getModelFilters()) && !is_null($request->get($field, null)) && $request->get($field, '') != '';
+        return in_array($field, $this->getModelFilters()) && !is_null($request->input($field, null)) && $request->input($field, '') != '';
     }
 
     /**
@@ -128,7 +128,7 @@ trait Filterable
 
         $columns = $this->getSearchableTableColumns();
 
-        foreach ( explode(' ', $request->get('search')) as $value )
+        foreach ( explode(' ', $request->input('search')) as $value )
             $this->setQuery($this->getQuery()
                                  ->where(function ( $q ) use ( $value, $columns )
                                  {
