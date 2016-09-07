@@ -3,9 +3,10 @@
   "description": "Common queries wrapped up in a base repository class to be extended",
   "type": "library",
   "require": {
-    "illuminate/view": "^5.1",
-    "illuminate/support": "^5.1",
-    "illuminate/contracts": "^5.1"
+    "phpunit/phpunit": "~4.0",
+    "phpspec/phpspec": "~2.1",
+    "laracasts/testdummy": "~2.0",
+    "laravel/laravel": "dev-develop"
   },
   "autoload": {
     "psr-0": {
@@ -19,5 +20,18 @@
       "email": "tom.sinclair31@gmail.com"
     }
   ],
-  "minimum-stability": "dev"
+  "minimum-stability": "dev",
+  "scripts": {
+    "phpunit": "./vendor/bin/phpunit;"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "http://satis.wtbidev.co.uk"
+    }
+  ],
+  "config": {
+    "preferred-install": "dist",
+    "secure-http": false
+  }
 }

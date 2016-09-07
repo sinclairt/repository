@@ -2,6 +2,7 @@
 
 namespace Sinclair\Repository\Repositories;
 
+use Illuminate\Database\Query\Builder;
 use Sinclair\Repository\Contracts\Repository as RepositoryInterface;
 use Sinclair\Repository\Traits\EloquentRepository;
 use Sinclair\Repository\Traits\EloquentSoftDeleteRepository;
@@ -12,7 +13,7 @@ use Sinclair\Repository\Traits\Filterable;
  * Class Repository
  * @package Sinclair\Repository\Repositories
  *
- * @property $model
+ * @property Model $model
  */
 abstract class Repository implements RepositoryInterface
 {
@@ -23,7 +24,7 @@ abstract class Repository implements RepositoryInterface
      *
      * @return $this
      */
-    public function setModel(Model $model)
+    public function setModel( Model $model )
     {
         $this->model = $model;
 
@@ -31,7 +32,7 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * @return Model
+     * @return Model| Builder
      */
     public function getModel()
     {
@@ -39,28 +40,35 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * @param $query
+     * @param Builder|\Illuminate\Database\Eloquent\Builder $query
      * @param string|null $orderBy
      * @param string $direction
      *
-     * @return mixed
+     * @return void
      */
     public function sort( &$query, $orderBy, $direction )
     {
-        if ( !is_null($orderBy) )
-        {
-            $relationshipOrderBy = explode('.', $orderBy);
-            if ( sizeof($relationshipOrderBy) > 1 )
-            {
-                $query = $query->select($this->model->getTable() . '.*')
-                               ->join($this->getRelatedTable($relationshipOrderBy), $this->getRelatedForeignKey($relationshipOrderBy), '=', 'related.id')
-                               ->orderBy($this->getRelatedSortColumn($relationshipOrderBy), $direction);
-            }
-            else
-            {
-                $query = $query->orderBy($orderBy, $direction);
-            }
-        }
+        $relationshipOrderBy = explode('.', $orderBy);
+
+        sizeof($relationshipOrderBy) > 1 ?
+            $query->select($this->getModel()
+                                ->getTable() . '.*')
+                  ->join($this->getRelatedTable($relationshipOrderBy), $this->getRelatedForeignKey($relationshipOrderBy), '=', 'related.id')
+                  ->orderBy($this->getRelatedSortColumn($relationshipOrderBy), $direction) :
+            $query->orderBy($orderBy, $direction);
+    }
+
+    /**
+     * @param $orderBy
+     * @param $direction
+     *
+     * @return Builder| \Illuminate\Database\Eloquent\Builder
+     */
+    private function applySort( $orderBy, $direction )
+    {
+        $query = $this->model->newQuery();
+
+        $this->sort($query, $orderBy, $direction);
 
         return $query;
     }
@@ -92,7 +100,8 @@ abstract class Repository implements RepositoryInterface
      */
     private function getRelatedForeignKey( $relationshipOrderBy )
     {
-        return $this->model->getTable() . '.' . str_singular($this->getRelation($relationshipOrderBy)) . '_id';
+        return $this->getModel()
+                    ->getTable() . '.' . str_singular($this->getRelation($relationshipOrderBy)) . '_id';
     }
 
     /**

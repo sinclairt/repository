@@ -2,6 +2,8 @@
 
 namespace Sinclair\Repository\Contracts;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +16,6 @@ use Illuminate\Http\Request;
  */
 interface Repository
 {
-
     /**
      * @param $query
      * @param string|null $orderBy
@@ -23,7 +24,6 @@ interface Repository
      * @return mixed
      */
     public function sort( &$query, $orderBy, $direction );
-
 
     /**
      * @param int $id
@@ -34,7 +34,6 @@ interface Repository
 
     /**
      * @param array $columns
-     *
      * @param null $orderBy
      * @param string $direction
      *
@@ -46,7 +45,17 @@ interface Repository
      * @param int $rows
      * @param null $orderBy
      * @param string $direction
+     * @param array $columns
+     * @param string $pageName
      *
+     * @return LengthAwarePaginator
+     */
+    public function getAllPaginated( $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' );
+
+    /**
+     * @param int $rows
+     * @param null $orderBy
+     * @param string $direction
      * @param array $columns
      * @param string $pageName
      *
@@ -84,7 +93,7 @@ interface Repository
     public function destroy( $model );
 
     /**
-     * @param array$attributes
+     * @param array $attributes
      * @param Model|null $model
      *
      * @return Model
@@ -200,14 +209,14 @@ interface Repository
     public function filterPaginated( Request $request, $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $paginationName = 'page', $search = true );
 
     /**
-     * @param mixed $query
+     * @param Builder|\Illuminate\Database\Query\Builder $query
      *
      * @return Filterable
      */
     public function setQuery( $query );
 
     /**
-     * @return Builder
+     * @return Builder|\Illuminate\Database\Query\Builder
      */
     public function getQuery();
 
@@ -216,10 +225,62 @@ interface Repository
      *
      * @return $this
      */
-    public function setModel(Model $model);
+    public function setModel( Model $model );
 
     /**
      * @return Model
      */
     public function getModel();
+
+    /**
+     * @param Carbon|null $from
+     * @param Carbon|null $to
+     * @param string $ts
+     * @param array $columns
+     * @param null $orderBy
+     * @param string $direction
+     *
+     * @return Collection
+     */
+    public function getDateBetween( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $columns = [ '*' ], $orderBy = null, $direction = 'asc' );
+
+    /**
+     * @param Carbon|null $from
+     * @param Carbon|null $to
+     * @param string $ts
+     * @param int $rows
+     * @param null $orderBy
+     * @param string $direction
+     * @param array $columns
+     * @param string $pageName
+     *
+     * @return LengthAwarePaginator
+     */
+    public function getDateBetweenPaginated( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' );
+
+    /**
+     * @param Carbon|null $from
+     * @param Carbon|null $to
+     * @param string $ts
+     * @param array $columns
+     * @param null $orderBy
+     * @param string $direction
+     *
+     * @return Collection
+     */
+    public function getDateBetweenWithTrashed( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $columns = [ '*' ], $orderBy = null, $direction = 'asc' );
+
+    /**
+     * @param Carbon|null $from
+     * @param Carbon|null $to
+     * @param string $ts
+     * @param int $rows
+     * @param null $orderBy
+     * @param string $direction
+     * @param array $columns
+     * @param string $pageName
+     *
+     * @return LengthAwarePaginator
+     */
+    public function getDateBetweenPaginatedWithTrashed( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' );
 }

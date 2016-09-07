@@ -2,8 +2,9 @@
 
 namespace Sinclair\Repository\Traits;
 
+use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -19,12 +20,12 @@ trait EloquentRepository
      */
     public function getById( $id )
     {
-        return $this->model->find($id);
+        return $this->getModel()
+                    ->find($id);
     }
 
     /**
      * @param array $columns
-     *
      * @param null $orderBy
      * @param string $direction
      *
@@ -32,27 +33,37 @@ trait EloquentRepository
      */
     public function getAll( $columns = [ '*' ], $orderBy = null, $direction = 'asc' )
     {
-        $query = $orderBy == null ? $this->model->latest() : $this->sort($this->model, $orderBy, $direction);
-
-        return $query->get($columns);
+        return $this->applySort($orderBy, $direction)
+                    ->get($columns);
     }
 
     /**
      * @param int $rows
-     *
      * @param null $orderBy
      * @param string $direction
+     * @param array $columns
+     * @param string $pageName
      *
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function getAllPaginated( $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' )
+    {
+        return $this->getAllPaginate($rows, $orderBy, $direction, $columns, $pageName);
+    }
+
+    /**
+     * @param int $rows
+     * @param null $orderBy
+     * @param string $direction
      * @param array $columns
      * @param $pageName
      *
-     * @return LengthAwarePaginator
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function getAllPaginate( $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' )
     {
-        $query = $orderBy == null ? $this->model->latest() : $this->sort($this->model, $orderBy, $direction);
-
-        return $query->paginate($rows, $columns, $pageName);
+        return $this->applySort($orderBy, $direction)
+                    ->paginate($rows, $columns, $pageName);
     }
 
     /**
@@ -72,7 +83,7 @@ trait EloquentRepository
      */
     public function getByName( $name )
     {
-        return $this->model->where('name', $name)
+        return $this->getModel()->where('name', $name)
                            ->first();
     }
 
@@ -124,7 +135,7 @@ trait EloquentRepository
     {
         $attributes = $this->onlyFillable($attributes, $this->model);
 
-        return $this->model->firstOrCreate($attributes);
+        return $this->getModel()->firstOrCreate($attributes);
     }
 
     /**
@@ -158,15 +169,7 @@ trait EloquentRepository
      */
     public function onlyFillable( $attributes, $model )
     {
-        foreach ( $attributes as $key => $value )
-        {
-            if ( !$model->isFillable($key) || str_contains($key, '_confirmation') )
-            {
-                unset( $attributes[ $key ] );
-            }
-        }
-
-        return $attributes;
+        return array_filter($attributes, [ $model, 'isFillable' ], ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -176,11 +179,9 @@ trait EloquentRepository
      */
     public function search( $search )
     {
-        $query = $this->model;
-
-        $query = $query->where(function ( $q ) use ( $search )
+        $query = $this->getModel()->where(function ( $q ) use ( $search )
         {
-            $fields = array_diff($this->model->getFillable(), $this->model->getHidden());
+            $fields = array_diff($this->getModel()->getFillable(), $this->getModel()->getHidden());
 
             $first = true;
 
@@ -202,7 +203,53 @@ trait EloquentRepository
      */
     public function deleteByIds( array $ids )
     {
-        return $this->model->whereIn('id', $ids)
+        return $this->getModel()->whereIn('id', $ids)
                            ->delete();
+    }
+
+    /**
+     * @param Carbon|null $from
+     * @param Carbon|null $to
+     * @param string $ts
+     * @param array $columns
+     * @param null $orderBy
+     * @param string $direction
+     *
+     * @return Collection
+     */
+    public function getDateBetween( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $columns = [ '*' ], $orderBy = null, $direction = 'asc' )
+    {
+        $from = is_null($from) ? Carbon::now()
+                                       ->subDay() : $from;
+
+        $to = is_null($to) ? Carbon::now() : $to;
+
+        return $this->applySort($orderBy, $direction)
+                    ->whereBetween($ts, [ $from->toDateTimeString(), $to->toDateTimeString() ])
+                    ->get($columns);
+    }
+
+    /**
+     * @param Carbon|null $from
+     * @param Carbon|null $to
+     * @param string $ts
+     * @param int $rows
+     * @param null $orderBy
+     * @param string $direction
+     * @param array $columns
+     * @param string $pageName
+     *
+     * @return LengthAwarePaginator
+     */
+    public function getDateBetweenPaginated( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' )
+    {
+        $from = is_null($from) ? Carbon::now()
+                                       ->subDay() : $from;
+
+        $to = is_null($to) ? Carbon::now() : $to;
+
+        return $this->applySort($orderBy, $direction)
+                    ->whereBetween($ts, [ $from->toDateTimeString(), $to->toDateTimeString() ])
+                    ->paginate($rows, $columns, $pageName);
     }
 }

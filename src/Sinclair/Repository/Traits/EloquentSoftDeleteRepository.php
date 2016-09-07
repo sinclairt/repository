@@ -2,6 +2,7 @@
 
 namespace Sinclair\Repository\Traits;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
@@ -34,7 +35,7 @@ trait EloquentSoftDeleteRepository
     {
         $query = $this->model->withTrashed();
 
-        $query = $orderBy == null ? $query->latest() : $this->sort($query, $orderBy, $direction);
+        $orderBy == null ? $query = $query->latest() : $this->sort($query, $orderBy, $direction);
 
         return $query->get($columns);
     }
@@ -43,7 +44,6 @@ trait EloquentSoftDeleteRepository
      * @param int $rows
      * @param null $orderBy
      * @param string $direction
-     *
      * @param array $columns
      * @param string $pageName
      *
@@ -53,7 +53,7 @@ trait EloquentSoftDeleteRepository
     {
         $query = $this->model->withTrashed();
 
-        $query = $orderBy == null ? $query->latest() : $this->sort($query, $orderBy, $direction);
+        $orderBy == null ? $query = $query->latest() : $this->sort($query, $orderBy, $direction);
 
         return $query->paginate($rows, $columns, $pageName);
     }
@@ -117,5 +117,53 @@ trait EloquentSoftDeleteRepository
             });
 
         return $data;
+    }
+
+    /**
+     * @param Carbon|null $from
+     * @param Carbon|null $to
+     * @param string $ts
+     * @param array $columns
+     * @param null $orderBy
+     * @param string $direction
+     *
+     * @return Collection
+     */
+    public function getDateBetweenWithTrashed( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $columns = [ '*' ], $orderBy = null, $direction = 'asc' )
+    {
+        $from = is_null($from) ? Carbon::now()
+                                       ->subDay() : $from;
+
+        $to = is_null($to) ? Carbon::now() : $to;
+
+        return $this->applySort($orderBy, $direction)
+                    ->withTrashed()
+                    ->whereBetween($ts, [ $from->toDateTimeString(), $to->toDateTimeString() ])
+                    ->get($columns);
+    }
+
+    /**
+     * @param Carbon|null $from
+     * @param Carbon|null $to
+     * @param string $ts
+     * @param int $rows
+     * @param null $orderBy
+     * @param string $direction
+     * @param array $columns
+     * @param string $pageName
+     *
+     * @return LengthAwarePaginator
+     */
+    public function getDateBetweenPaginatedWithTrashed( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' )
+    {
+        $from = is_null($from) ? Carbon::now()
+                                       ->subDay() : $from;
+
+        $to = is_null($to) ? Carbon::now() : $to;
+
+        return $this->applySort($orderBy, $direction)
+                    ->withTrashed()
+                    ->whereBetween($ts, [ $from->toDateTimeString(), $to->toDateTimeString() ])
+                    ->paginate($rows, $columns, $pageName);
     }
 }

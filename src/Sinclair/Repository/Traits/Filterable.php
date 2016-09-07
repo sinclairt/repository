@@ -2,10 +2,10 @@
 
 namespace Sinclair\Repository\Traits;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Filterable
@@ -13,9 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 trait Filterable
 {
-
     /**
-     * @var
+     * @var Builder
      */
     public $query;
 
@@ -32,13 +31,15 @@ trait Filterable
     public function filter( Request $request, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $search = true )
     {
         $this->setQuery($request->input('trashed') == 1 ? $this->getModel()
-                                                             ->withTrashed() : $this->getModel());
+                                                               ->withTrashed() : $this->getModel());
 
-        foreach ( $request->except('_token') as $key => $value )
-            $this->{'filter' . studly_case($key)}($request, $search);
+        $this->applyFilters($request, $search);
 
-        return $this->sort($this->query, $orderBy, $direction)
-                    ->get($columns);
+        $query = $this->query;
+
+        $this->sort($query, $orderBy, $direction);
+
+        return $query->get($columns);
     }
 
     /**
@@ -47,22 +48,24 @@ trait Filterable
      * @param string|null $orderBy
      * @param string $direction
      * @param array $columns
-     * @param string $paginationName
+     * @param string $pageName
      *
      * @param bool $search
      *
      * @return LengthAwarePaginator
      */
-    public function filterPaginated( Request $request, $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $paginationName = 'page', $search = true )
+    public function filterPaginated( Request $request, $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page', $search = true )
     {
         $this->setQuery($request->input('trashed') == 1 ? $this->getModel()
-                                                             ->withTrashed() : $this->getModel());
+                                                               ->withTrashed() : $this->getModel());
 
-        foreach ( $request->except('_token') as $key => $value )
-            $this->{'filter' . studly_case($key)}($request, $search);
+        $this->applyFilters($request, $search);
 
-        return $this->sort($this->query, $orderBy, $direction)
-                    ->paginate($rows, $columns, $paginationName);
+        $query = $this->query;
+
+        $this->sort($query, $orderBy, $direction);
+
+        return $query->paginate($rows, $columns, $pageName);
     }
 
     /**
@@ -116,12 +119,22 @@ trait Filterable
 
     /**
      * @param Request $request
+     * @param $search
+     */
+    protected function applyFilters( Request $request, $search )
+    {
+        foreach ( $request->except('_token') as $key => $value )
+            $this->{'filter' . studly_case($key)}($request, $search);
+    }
+
+    /**
+     * @param Request $request
      *
      * @param bool $search
      *
      * @return $this
      */
-    private function filterSearch( Request $request, $search = true )
+    protected function filterSearch( Request $request, $search = true )
     {
         if ( !$this->filterIsset($request, 'search') || !$search )
             return $this;
@@ -165,7 +178,7 @@ trait Filterable
     private function getSearchableTableColumns()
     {
         return array_diff($this->getTableColumns(), $this->getModel()
-                                                             ->getDates(), $this->getModel()
-                                                                                ->getKeyName());
+                                                         ->getDates(), $this->getModel()
+                                                                            ->getKeyName());
     }
 }
