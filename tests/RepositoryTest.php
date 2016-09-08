@@ -622,7 +622,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getByIdWithTrashed($expected->id);
 
-        $this->assertArraySubset(array_except($expected->toArray(), 'deleted_at'), $actual->toArray());
+        $this->assertArraySubset(array_except($expected->toArray(), ['updated_at', 'deleted_at']), $actual->toArray());
     }
 
     public function test_i_can_get_all_models_including_deleted_models()
@@ -638,8 +638,9 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getAllWithTrashed();
 
-        foreach ( $expected as $key => $value )
-            $this->assertArraySubset($expected->toArray(), $actual->toArray());
+        foreach ( $actual as $key => $value )
+            $this->assertArraySubset(array_except($expected->get($key)
+                                                           ->toArray(), [ 'updated_at', 'deleted_at' ]), $value->toArray());
     }
 
     public function test_i_can_get_all_models_with_only_the_name_attribute_including_deleted_models()
@@ -1635,7 +1636,7 @@ class RepositoryTest extends DbTestCase
         $this->assertEquals(20, $actual->total());
     }
 
-    public function test_i_can_get_back_models_between_two_dates_swith_a_page_name_of_foo()
+    public function test_i_can_get_back_models_between_two_dates_with_a_page_name_of_foo()
     {
         $this->makeDummies();
 
@@ -1649,8 +1650,10 @@ class RepositoryTest extends DbTestCase
     {
         $from = \Carbon\Carbon::now()
                               ->subWeek();
+
         $to = \Carbon\Carbon::now()
                             ->subDay();
+
         $expected = $this->makeDummies()
                          ->each(function ( &$dummy ) use ( $from, $to )
                          {
@@ -1675,7 +1678,7 @@ class RepositoryTest extends DbTestCase
 
         foreach ( $actual as $key => $value )
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), 'deleted_at'), $value->toArray());
+                                                           ->toArray(), [ 'deleted_at', 'updated_at' ]), $value->toArray());
 
         $this->assertEquals(20, sizeof($actual));
     }
@@ -1712,7 +1715,7 @@ class RepositoryTest extends DbTestCase
 
         foreach ( $actual as $key => $value )
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), 'deleted_at'), $value->toArray());
+                                                           ->toArray(), [ 'deleted_at', 'updated_at' ]), $value->toArray());
 
         $this->assertEquals(20, sizeof($actual));
     }
@@ -1749,7 +1752,7 @@ class RepositoryTest extends DbTestCase
 
         foreach ( $actual as $key => $value )
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), 'deleted_at'), $value->toArray());
+                                                           ->toArray(), [ 'deleted_at', 'updated_at' ]), $value->toArray());
 
         $this->assertEquals(20, sizeof($actual));
     }
@@ -1762,22 +1765,25 @@ class RepositoryTest extends DbTestCase
         $to = \Carbon\Carbon::now()
                             ->subDay();
 
-        $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
-                         {
-                             $dt = $this->faker->dateTimeBetween($from, $to);
-                             $dummy->created_at = \Carbon\Carbon::instance($dt)
-                                                                ->toDateTimeString();
-                             $dummy->updated_at = \Carbon\Carbon::instance($dt)
-                                                                ->toDateTimeString();
-                             $dummy->save();
-                         });
+        $expected = $this->makeDummies();
 
-        $expected->slice(5, 5)
-                 ->each(function ( &$item )
-                 {
-                     $item->delete();
-                 });
+        $expected->each(function ( &$dummy ) use ( $from, $to )
+        {
+            $dt = $this->faker->dateTimeBetween($from, $to);
+
+            $dummy->created_at = \Carbon\Carbon::instance($dt)
+                                               ->toDateTimeString();
+
+            $dummy->updated_at = \Carbon\Carbon::instance($dt)
+                                               ->toDateTimeString();
+
+            if ( $dummy->id % 5 == 0 )
+                $dummy->deleted_at = \Carbon\Carbon::instance($dt)
+                                                   ->toDateTimeString();
+
+            $dummy->save();
+        })
+                 ->values();
 
         $this->makeDummies();
 
@@ -1786,7 +1792,7 @@ class RepositoryTest extends DbTestCase
 
         foreach ( $actual as $key => $value )
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), 'deleted_at'), $value->toArray());
+                                                           ->toArray(), [ 'deleted_at', 'updated_at' ]), $value->toArray());
 
         $this->assertEquals(20, sizeof($actual));
     }
@@ -1819,7 +1825,7 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetweenWithTrashed($from, $to, 'updated_at', [ 'name' ]);
+                       ->getDateBetweenWithTrashed($from, $to, 'created_at', [ 'name' ]);
 
         foreach ( $actual as $key => $value )
             $this->assertArraySubset(array_only($expected->get($key)
@@ -1862,14 +1868,286 @@ class RepositoryTest extends DbTestCase
 
         foreach ( $actual as $key => $value )
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), 'deleted_at'), $value->toArray());
+                                                           ->toArray(), [ 'deleted_at', 'updated_at' ]), $value->toArray());
 
         $this->assertEquals(20, sizeof($actual));
     }
 
-    public function test_i_can_get_models_with_a_date_between_two_supplied_values_including_deleted_models_paginated()
+    public function test_i_can_get_models_with_a_date_between_two_supplied_values_and_paginated_including_deleted_models()
     {
+        $from = \Carbon\Carbon::now()
+                              ->subWeek();
+        $to = \Carbon\Carbon::now()
+                            ->subDay();
+        $expected = $this->makeDummies()
+                         ->each(function ( &$dummy ) use ( $from, $to )
+                         {
+                             $dt = $this->faker->dateTimeBetween($from, $to);
 
+                             $dummy->created_at = \Carbon\Carbon::instance($dt)
+                                                                ->toDateTimeString();
+                             $dummy->updated_at = \Carbon\Carbon::instance($dt)
+                                                                ->toDateTimeString();
+                             $dummy->save();
+                         })
+                         ->slice(0, 15);
+
+        $expected->slice(5, 5)
+                 ->each(function ( $item )
+                 {
+                     $item->delete();
+                 });
+
+        $this->makeDummies();
+
+        $actual = $this->makeRepository()
+                       ->getDateBetweenPaginatedWithTrashed($from, $to);
+
+        foreach ( $actual as $key => $value )
+            $this->assertArraySubset(array_except($expected->get($key)
+                                                           ->toArray(), [ 'updated_at', 'deleted_at' ]), $value->toArray());
+
+        $this->assertEquals(20, $actual->total());
+    }
+
+    public function test_i_can_get_models_created_in_the_last_24_hours_and_paginated_including_deleted_models()
+    {
+        $from = \Carbon\Carbon::now()
+                              ->subWeek();
+
+        $to = \Carbon\Carbon::now()
+                            ->subDay();
+
+        $this->makeDummies()
+             ->each(function ( &$dummy ) use ( $from, $to )
+             {
+                 $dt = $this->faker->dateTimeBetween($from, $to);
+                 $dummy->created_at = \Carbon\Carbon::instance($dt)
+                                                    ->toDateTimeString();
+                 $dummy->updated_at = \Carbon\Carbon::instance($dt)
+                                                    ->toDateTimeString();
+                 $dummy->save();
+             });
+
+        $expected = $this->makeDummies()
+                         ->slice(0, 15);
+
+        $expected->slice(5, 5)
+                 ->each(function ( $item )
+                 {
+                     $item->delete();
+                 });
+
+        $actual = $this->makeRepository()
+                       ->getDateBetweenPaginatedWithTrashed();
+
+        foreach ( $actual as $key => $value )
+            $this->assertArraySubset($expected->get($key)
+                                              ->toArray(), $value->toArray());
+
+        $this->assertEquals(20, $actual->total());
+    }
+
+    public function test_i_can_get_models_updated_in_the_last_24_hours_and_paginated_including_deleted_models()
+    {
+        $from = \Carbon\Carbon::now()
+                              ->subWeek();
+
+        $to = \Carbon\Carbon::now()
+                            ->subDay();
+
+        $this->makeDummies()
+             ->each(function ( &$dummy ) use ( $from, $to )
+             {
+                 $dt = $this->faker->dateTimeBetween($from, $to);
+                 $dummy->created_at = \Carbon\Carbon::instance($dt)
+                                                    ->toDateTimeString();
+                 $dummy->updated_at = \Carbon\Carbon::instance($dt)
+                                                    ->toDateTimeString();
+                 $dummy->save();
+             });
+
+        $expected = $this->makeDummies();
+
+        $expected->slice(5, 5)
+                 ->each(function ( $item )
+                 {
+                     $item->delete();
+                 });
+
+        $actual = $this->makeRepository()
+                       ->getDateBetweenPaginatedWithTrashed(null, null, 'updated_at');
+
+        foreach ( $actual as $key => $value )
+            $this->assertArraySubset($expected->get($key)
+                                              ->toArray(), $value->toArray());
+
+        $this->assertEquals(20, $actual->total());
+    }
+
+    public function test_i_can_get_models_updated_between_two_dates_and_paginated_including_deleted_models()
+    {
+        $from = \Carbon\Carbon::now()
+                              ->subWeek();
+
+        $to = \Carbon\Carbon::now()
+                            ->subDay();
+
+        $expected = $this->makeDummies()
+                         ->each(function ( &$dummy ) use ( $from, $to )
+                         {
+                             $dt = $this->faker->dateTimeBetween($from, $to);
+                             $dummy->created_at = \Carbon\Carbon::instance($dt)
+                                                                ->toDateTimeString();
+                             $dummy->updated_at = \Carbon\Carbon::instance($dt)
+                                                                ->toDateTimeString();
+                             if ( $dummy->id % 5 == 0 )
+                                 $dummy->deleted_at = \Carbon\Carbon::instance($dt)
+                                                                    ->toDateTimeString();
+                             $dummy->save();
+                         })
+                         ->slice(0, 15);
+
+        $this->makeDummies();
+
+        $actual = $this->makeRepository()
+                       ->getDateBetweenPaginatedWithTrashed($from, $to, 'updated_at');
+
+        foreach ( $actual as $key => $value )
+            $this->assertArraySubset(array_except($expected->get($key)
+                                                           ->toArray(), [ 'updated_at', 'deleted_at' ]), $value->toArray());
+
+        $this->assertEquals(20, $actual->total());
+    }
+
+    public function test_i_can_get_the_name_attribute_of_models_between_two_dates_and_paginated_including_deleted_models()
+    {
+        $from = \Carbon\Carbon::now()
+                              ->subWeek();
+
+        $to = \Carbon\Carbon::now()
+                            ->subDay();
+
+        $expected = $this->makeDummies()
+                         ->each(function ( &$dummy ) use ( $from, $to )
+                         {
+                             $dt = $this->faker->dateTimeBetween($from, $to);
+
+                             $dummy->created_at = \Carbon\Carbon::instance($dt)
+                                                                ->toDateTimeString();
+
+                             $dummy->updated_at = \Carbon\Carbon::instance($dt)
+                                                                ->toDateTimeString();
+
+                             $dummy->save();
+                         })
+                         ->slice(0, 15);
+
+        $expected->slice(5, 5)
+                 ->each(function ( $item )
+                 {
+                     $item->delete();
+                 });
+
+        $this->makeDummies();
+
+        $actual = $this->makeRepository()
+                       ->getDateBetweenPaginatedWithTrashed($from, $to, 'created_at', 15, null, 'asc', [ 'name' ]);
+
+        foreach ( $actual as $key => $value )
+            $this->assertArraySubset(array_only($expected->get($key)
+                                                         ->toArray(), 'name'), $value->toArray());
+
+        $this->assertEquals(20, $actual->total());
+    }
+
+    public function test_i_can_order_models_between_two_dates_by_the_rank_attribute_and_paginated_including_deleted_models()
+    {
+        $from = \Carbon\Carbon::now()
+                              ->subWeek();
+
+        $to = \Carbon\Carbon::now()
+                            ->subDay();
+
+        $expected = $this->makeDummies()
+                         ->each(function ( &$dummy ) use ( $from, $to )
+                         {
+                             $dt = $this->faker->dateTimeBetween($from, $to);
+                             $dummy->created_at = \Carbon\Carbon::instance($dt)
+                                                                ->toDateTimeString();
+                             $dummy->updated_at = \Carbon\Carbon::instance($dt)
+                                                                ->toDateTimeString();
+                             $dummy->save();
+                         })
+                         ->sortByDesc('rank')
+                         ->slice(0, 15)
+                         ->values();
+
+        $expected->slice(5, 5)
+                 ->each(function ( $item )
+                 {
+                     $item->delete();
+                 });
+
+        $this->makeDummies();
+
+        $actual = $this->makeRepository()
+                       ->getDateBetweenPaginatedWithTrashed($from, $to, 'created_at', 15, 'rank', 'desc', [ '*' ]);
+
+        foreach ( $actual as $key => $value )
+            $this->assertArraySubset(array_except($expected->get($key)
+                                                           ->toArray(), [ 'updated_at', 'deleted_at' ]), $value->toArray());
+
+        $this->assertEquals(20, $actual->total());
+    }
+
+    public function test_i_can_get_back_models_between_two_dates_in_pages_of_10_including_deleted_models()
+    {
+        $from = \Carbon\Carbon::now()
+                              ->subWeek();
+
+        $to = \Carbon\Carbon::now()
+                            ->subDay();
+
+        $expected = $this->makeDummies()
+                         ->each(function ( &$dummy ) use ( $from, $to )
+                         {
+                             $dt = $this->faker->dateTimeBetween($from, $to);
+                             $dummy->created_at = \Carbon\Carbon::instance($dt)
+                                                                ->toDateTimeString();
+                             $dummy->updated_at = \Carbon\Carbon::instance($dt)
+                                                                ->toDateTimeString();
+                             $dummy->save();
+                         })
+                         ->slice(0, 10)
+                         ->values();
+
+        $expected->slice(5, 5)
+                 ->each(function ( $item )
+                 {
+                     $item->delete();
+                 });
+
+        $this->makeDummies();
+
+        $actual = $this->makeRepository()
+                       ->getDateBetweenPaginatedWithTrashed($from, $to, 'created_at', 10);
+
+        foreach ( $actual as $key => $value )
+            $this->assertArraySubset(array_except($expected->get($key)
+                                                           ->toArray(), [ 'updated_at', 'deleted_at' ]), $value->toArray());
+
+        $this->assertEquals(20, $actual->total());
+    }
+
+    public function test_i_can_get_back_models_between_two_dates_with_a_page_name_of_foo_including_deleted_models()
+    {
+        $this->makeDummies();
+
+        $actual = $this->makeRepository()
+                       ->getDateBetweenPaginatedWithTrashed(null, null, 'created_at', 15, null, 'asc', [ '*' ], 'foo');
+
+        $this->assertEquals('foo', $actual->getPageName());
     }
 
     protected function makeRepository()

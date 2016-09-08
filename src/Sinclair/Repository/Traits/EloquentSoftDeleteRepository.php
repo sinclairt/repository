@@ -137,8 +137,8 @@ trait EloquentSoftDeleteRepository
         $to = is_null($to) ? Carbon::now() : $to;
 
         return $this->applySort($orderBy, $direction)
-                    ->withTrashed()
                     ->whereBetween($ts, [ $from->toDateTimeString(), $to->toDateTimeString() ])
+                    ->withTrashed()
                     ->get($columns);
     }
 
