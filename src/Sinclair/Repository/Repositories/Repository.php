@@ -64,11 +64,12 @@ abstract class Repository implements RepositoryInterface
      *
      * @return Builder| \Illuminate\Database\Eloquent\Builder
      */
-    private function applySort( $orderBy, $direction )
+    private function applySort( $orderBy = null, $direction = null )
     {
         $query = $this->model->newQuery();
 
-        $this->sort($query, $orderBy, $direction);
+        if ( !is_null($orderBy) )
+            $this->sort($query, $orderBy, $direction);
 
         return $query;
     }
