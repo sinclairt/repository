@@ -48,14 +48,17 @@ abstract class Repository implements RepositoryInterface
      */
     public function sort( &$query, $orderBy, $direction )
     {
-        $relationshipOrderBy = explode('.', $orderBy);
+        if ( !is_null($orderBy) )
+        {
+            $relationshipOrderBy = explode('.', $orderBy);
 
-        sizeof($relationshipOrderBy) > 1 ?
-            $query->select($this->getModel()
-                                ->getTable() . '.*')
-                  ->join($this->getRelatedTable($relationshipOrderBy), $this->getRelatedForeignKey($relationshipOrderBy), '=', 'related.id')
-                  ->orderBy($this->getRelatedSortColumn($relationshipOrderBy), $direction) :
-            $query->orderBy($orderBy, $direction);
+            sizeof($relationshipOrderBy) > 1 ?
+                $query->select($this->getModel()
+                                    ->getTable() . '.*')
+                      ->join($this->getRelatedTable($relationshipOrderBy), $this->getRelatedForeignKey($relationshipOrderBy), '=', 'related.id')
+                      ->orderBy($this->getRelatedSortColumn($relationshipOrderBy), $direction) :
+                $query->orderBy($orderBy, $direction);
+        }
     }
 
     /**
