@@ -25,10 +25,10 @@ class RepositoryTest extends DbTestCase
 
         $this->faker = Faker\Factory::create();
 
-        \Artisan::call('vendor:publish', [ '--tag' => 'config' ]);
+        \Artisan::call('vendor:publish', ['--tag' => 'config']);
     }
 
-    function append( $item )
+    function append($item)
     {
         return $item = 'hello_' . $item;
     }
@@ -51,13 +51,13 @@ class RepositoryTest extends DbTestCase
             'column'    => 'created_at',
             'direction' => 'desc',
 
-        ], $orderClauses[ 0 ]);
+        ], $orderClauses[0]);
 
         $this->assertArraySubset([
             'column'    => 'name',
             'direction' => 'asc',
 
-        ], $orderClauses[ 1 ]);
+        ], $orderClauses[1]);
     }
 
     public function test_i_can_apply_a_sort_to_an_existing_query_with_a_relations_column_and_direction()
@@ -78,13 +78,13 @@ class RepositoryTest extends DbTestCase
             'column'    => 'created_at',
             'direction' => 'desc',
 
-        ], $orderClauses[ 0 ]);
+        ], $orderClauses[0]);
 
         $this->assertArraySubset([
             'column'    => 'related.name',
             'direction' => 'asc',
 
-        ], $orderClauses[ 1 ]);
+        ], $orderClauses[1]);
     }
 
     public function test_i_can_get_an_object_by_its_id()
@@ -104,7 +104,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getAll();
 
-        foreach ( $expected as $key => $dummy )
+        foreach ($expected as $key => $dummy)
             $this->assertArraySubset($dummy->toArray(), $actual->get($key)
                                                                ->toArray());
     }
@@ -114,9 +114,9 @@ class RepositoryTest extends DbTestCase
         $expected = $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getAll([ 'name' ]);
+                       ->getAll(['name']);
 
-        foreach ( $expected as $key => $dummy )
+        foreach ($expected as $key => $dummy)
             $this->assertArraySubset(array_only($dummy->toArray(), 'name'), $actual->get($key)
                                                                                    ->toArray());
     }
@@ -128,9 +128,9 @@ class RepositoryTest extends DbTestCase
                          ->values();
 
         $actual = $this->makeRepository()
-                       ->getAll([ '*' ], 'rank', 'desc');
+                       ->getAll(['*'], 'rank', 'desc');
 
-        foreach ( $expected as $key => $dummy )
+        foreach ($expected as $key => $dummy)
             $this->assertArraySubset($dummy->toArray(), $actual->get($key)
                                                                ->toArray());
     }
@@ -140,9 +140,9 @@ class RepositoryTest extends DbTestCase
         $expected = $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getAll([ 'name' ]);
+                       ->getAll(['name']);
 
-        foreach ( $expected as $key => $dummy )
+        foreach ($expected as $key => $dummy)
             $this->assertArraySubset(array_only($dummy->toArray(), 'name'), $actual->get($key)
                                                                                    ->toArray());
     }
@@ -154,9 +154,9 @@ class RepositoryTest extends DbTestCase
                          ->values();
 
         $actual = $this->makeRepository()
-                       ->getAll([ 'name' ], 'rank');
+                       ->getAll(['name'], 'rank');
 
-        foreach ( $expected as $key => $dummy )
+        foreach ($expected as $key => $dummy)
             $this->assertArraySubset(array_only($dummy->toArray(), 'name'), $actual->get($key)
                                                                                    ->toArray());
     }
@@ -169,7 +169,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getAllPaginated();
 
-        foreach ( $actual as $key => $item )
+        foreach ($actual as $key => $item)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $item->toArray());
 
@@ -186,7 +186,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getAllPaginated(10);
 
-        foreach ( $actual as $key => $item )
+        foreach ($actual as $key => $item)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $item->toArray());
 
@@ -205,7 +205,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getAllPaginated(10, 'rank', 'desc');
 
-        foreach ( $actual as $key => $item )
+        foreach ($actual as $key => $item)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $item->toArray());
 
@@ -223,10 +223,10 @@ class RepositoryTest extends DbTestCase
                          ->values();
 
         $actual = $this->makeRepository()
-                       ->getAllPaginated(10, 'rank', 'desc', [ 'name' ]);
+                       ->getAllPaginated(10, 'rank', 'desc', ['name']);
 
-        foreach ( $actual as $key => $item )
-            $this->assertArraySubset([ 'name' => $expected->get($key) ], $item->toArray());
+        foreach ($actual as $key => $item)
+            $this->assertArraySubset(['name' => $expected->get($key)], $item->toArray());
 
         $this->assertEquals(10, sizeof($actual->items()));
 
@@ -242,10 +242,10 @@ class RepositoryTest extends DbTestCase
                          ->values();
 
         $actual = $this->makeRepository()
-                       ->getAllPaginated(10, 'rank', 'desc', [ 'name' ], 'foo');
+                       ->getAllPaginated(10, 'rank', 'desc', ['name'], 'foo');
 
-        foreach ( $actual as $key => $item )
-            $this->assertArraySubset([ 'name' => $expected->get($key) ], $item->toArray());
+        foreach ($actual as $key => $item)
+            $this->assertArraySubset(['name' => $expected->get($key)], $item->toArray());
 
         $this->assertEquals(10, sizeof($actual->items()));
 
@@ -266,7 +266,7 @@ class RepositoryTest extends DbTestCase
 
     public function test_i_can_create_a_model_with_additional_parameters_which_will_be_ignored()
     {
-        $attributes = array_replace($this->makeDummyAttributes(), [ 'foo' => 'bar' ]);
+        $attributes = array_replace($this->makeDummyAttributes(), ['foo' => 'bar']);
 
         $model = $this->makeRepository()
                       ->add($attributes);
@@ -324,7 +324,7 @@ class RepositoryTest extends DbTestCase
                       ->getModel()
                       ->newQuery();
 
-        foreach ( $attributes as $key => $value )
+        foreach ($attributes as $key => $value)
             $query->where($key, $value);
 
         $this->assertEquals(0, $query->count());
@@ -336,7 +336,7 @@ class RepositoryTest extends DbTestCase
                       ->getModel()
                       ->newQuery();
 
-        foreach ( $attributes as $key => $value )
+        foreach ($attributes as $key => $value)
             $query->where($key, $value);
 
         $this->assertEquals(1, $query->count());
@@ -344,7 +344,7 @@ class RepositoryTest extends DbTestCase
 
     public function test_i_can_find_the_first_model_with_a_set_of_attributes()
     {
-        $attributes = [ 'rank' => $this->faker->word, 'number' => $this->faker->ean13 ];
+        $attributes = ['rank' => $this->faker->word, 'number' => $this->faker->ean13];
 
         $expected = $this->makeDummies(20, $attributes)
                          ->first();
@@ -387,7 +387,7 @@ class RepositoryTest extends DbTestCase
                          ->pluck('rank', 'id')
                          ->toArray();
 
-        array_walk($expected, function ( &$item )
+        array_walk($expected, function (&$item)
         {
             $item = strtolower($item);
         });
@@ -404,13 +404,13 @@ class RepositoryTest extends DbTestCase
                          ->pluck('rank', 'id')
                          ->toArray();
 
-        array_walk($expected, function ( &$item )
+        array_walk($expected, function (&$item)
         {
             return $item = 'hello_' . $item;
         });
 
         $actual = $this->makeRepository()
-                       ->getArrayForSelect('rank', 'id', [ $this, 'append' ]);
+                       ->getArrayForSelect('rank', 'id', [$this, 'append']);
 
         $this->assertEquals($expected, $actual);
     }
@@ -420,7 +420,7 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $dummies->slice(0, 10)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
@@ -441,7 +441,7 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $dummies->slice(0, 10)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
@@ -461,7 +461,7 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $dummies->slice(0, 10)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
@@ -469,7 +469,7 @@ class RepositoryTest extends DbTestCase
         $expected = $dummies->pluck('rank', 'id')
                             ->toArray();
 
-        array_walk($expected, function ( &$item )
+        array_walk($expected, function (&$item)
         {
             $item = strtolower($item);
         });
@@ -485,7 +485,7 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $dummies->slice(0, 10)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
@@ -493,13 +493,13 @@ class RepositoryTest extends DbTestCase
         $expected = $dummies->pluck('rank', 'id')
                             ->toArray();
 
-        array_walk($expected, function ( &$item )
+        array_walk($expected, function (&$item)
         {
             return $item = 'hello_' . $item;
         });
 
         $actual = $this->makeRepository()
-                       ->getArrayForSelectWithTrashed('rank', 'id', [ $this, 'append' ]);
+                       ->getArrayForSelectWithTrashed('rank', 'id', [$this, 'append']);
 
         $this->assertEquals($expected, $actual);
     }
@@ -509,7 +509,7 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $dummies->slice(0, 10)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
@@ -530,7 +530,7 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $dummies->slice(0, 10)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
@@ -551,7 +551,7 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $dummies->slice(0, 10)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
@@ -560,7 +560,7 @@ class RepositoryTest extends DbTestCase
                             ->pluck('rank', 'id')
                             ->toArray();
 
-        array_walk($expected, function ( &$item )
+        array_walk($expected, function (&$item)
         {
             $item = strtolower($item);
         });
@@ -576,7 +576,7 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $dummies->slice(0, 10)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
@@ -585,13 +585,13 @@ class RepositoryTest extends DbTestCase
                             ->pluck('rank', 'id')
                             ->toArray();
 
-        array_walk($expected, function ( &$item )
+        array_walk($expected, function (&$item)
         {
             return $item = 'hello_' . $item;
         });
 
         $actual = $this->makeRepository()
-                       ->getArrayForSelect('rank', 'id', [ $this, 'append' ]);
+                       ->getArrayForSelect('rank', 'id', [$this, 'append']);
 
         $this->assertEquals($expected, $actual);
     }
@@ -602,7 +602,7 @@ class RepositoryTest extends DbTestCase
 
         $repository = $this->makeRepository();
 
-        $actual = $repository->onlyFillable(array_replace($expected, [ 'foo' => 'bar' ]), $repository->getModel());
+        $actual = $repository->onlyFillable(array_replace($expected, ['foo' => 'bar']), $repository->getModel());
 
         $this->assertEquals($expected, $actual);
     }
@@ -612,7 +612,7 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $dummies->slice(0, 10)
-                ->each(function ( $item )
+                ->each(function ($item)
                 {
                     $item->delete();
                 });
@@ -630,7 +630,7 @@ class RepositoryTest extends DbTestCase
         $expected = $this->makeDummies();
 
         $expected->slice(0, 10)
-                 ->each(function ( $item )
+                 ->each(function ($item)
                  {
                      $item->delete();
                  });
@@ -638,9 +638,9 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getAllWithTrashed();
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), [ 'updated_at', 'deleted_at' ]), $value->toArray());
+                                                           ->toArray(), ['updated_at', 'deleted_at']), $value->toArray());
     }
 
     public function test_i_can_get_all_models_with_only_the_name_attribute_including_deleted_models()
@@ -648,15 +648,15 @@ class RepositoryTest extends DbTestCase
         $expected = $this->makeDummies();
 
         $expected->slice(0, 10)
-                 ->each(function ( $item )
+                 ->each(function ($item)
                  {
                      $item->delete();
                  });
 
         $actual = $this->makeRepository()
-                       ->getAllWithTrashed([ 'name' ]);
+                       ->getAllWithTrashed(['name']);
 
-        foreach ( $expected as $key => $dummy )
+        foreach ($expected as $key => $dummy)
             $this->assertArraySubset(array_only($dummy->toArray(), 'name'), $actual->get($key)
                                                                                    ->toArray());
     }
@@ -668,15 +668,15 @@ class RepositoryTest extends DbTestCase
                          ->values();
 
         $expected->slice(0, 10)
-                 ->each(function ( $item )
+                 ->each(function ($item)
                  {
                      $item->delete();
                  });
 
         $actual = $this->makeRepository()
-                       ->getAllWithTrashed([ '*' ], 'rank', 'desc');
+                       ->getAllWithTrashed(['*'], 'rank', 'desc');
 
-        foreach ( $expected as $key => $dummy )
+        foreach ($expected as $key => $dummy)
             $this->assertArraySubset(array_except($dummy->toArray(), 'deleted_at'), $actual->get($key)
                                                                                            ->toArray());
     }
@@ -687,7 +687,7 @@ class RepositoryTest extends DbTestCase
                          ->slice(0, 15);
 
         $expected->slice(0, 5)
-                 ->each(function ( $dummy )
+                 ->each(function ($dummy)
                  {
                      $dummy->delete();
                  });
@@ -695,7 +695,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getAllPaginatedWithTrashed();
 
-        foreach ( $actual as $key => $item )
+        foreach ($actual as $key => $item)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $item->toArray());
 
@@ -710,7 +710,7 @@ class RepositoryTest extends DbTestCase
                          ->slice(0, 10);
 
         $expected->slice(0, 5)
-                 ->each(function ( $dummy )
+                 ->each(function ($dummy)
                  {
                      $dummy->delete();
                  });
@@ -718,7 +718,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getAllPaginatedWithTrashed(10);
 
-        foreach ( $actual as $key => $item )
+        foreach ($actual as $key => $item)
             $this->assertArraySubset(array_except($expected->get($key)
                                                            ->toArray(), 'deleted_at'), $item->toArray());
 
@@ -737,7 +737,7 @@ class RepositoryTest extends DbTestCase
             ->values();
 
         $dummies->slice(0, 5)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
@@ -745,7 +745,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getAllPaginatedWithTrashed(10, 'rank', 'desc');
 
-        foreach ( $actual as $key => $item )
+        foreach ($actual as $key => $item)
             $this->assertArraySubset(array_except($expected->get($key)
                                                            ->toArray(), 'deleted_at'), $item->toArray());
 
@@ -764,16 +764,16 @@ class RepositoryTest extends DbTestCase
                             ->values();
 
         $dummies->slice(0, 5)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
 
         $actual = $this->makeRepository()
-                       ->getAllPaginatedWithTrashed(10, 'rank', 'desc', [ 'name' ]);
+                       ->getAllPaginatedWithTrashed(10, 'rank', 'desc', ['name']);
 
-        foreach ( $actual as $key => $item )
-            $this->assertArraySubset([ 'name' => $expected->get($key) ], $item->toArray());
+        foreach ($actual as $key => $item)
+            $this->assertArraySubset(['name' => $expected->get($key)], $item->toArray());
 
         $this->assertEquals(10, sizeof($actual->items()));
 
@@ -790,16 +790,16 @@ class RepositoryTest extends DbTestCase
                             ->values();
 
         $dummies->slice(0, 5)
-                ->each(function ( $dummy )
+                ->each(function ($dummy)
                 {
                     $dummy->delete();
                 });
 
         $actual = $this->makeRepository()
-                       ->getAllPaginatedWithTrashed(10, 'rank', 'desc', [ 'name' ], 'foo');
+                       ->getAllPaginatedWithTrashed(10, 'rank', 'desc', ['name'], 'foo');
 
-        foreach ( $actual as $key => $item )
-            $this->assertArraySubset([ 'name' => $expected->get($key) ], $item->toArray());
+        foreach ($actual as $key => $item)
+            $this->assertArraySubset(['name' => $expected->get($key)], $item->toArray());
 
         $this->assertEquals(10, sizeof($actual->items()));
 
@@ -830,8 +830,8 @@ class RepositoryTest extends DbTestCase
 
         $expected = collect();
 
-        foreach ( $dummies as $dummy )
-            if ( in_array($term, $dummy->toArray()) )
+        foreach ($dummies as $dummy)
+            if (in_array($term, $dummy->toArray()))
                 $expected->push($dummy);
 
         $expected = $expected->slice(0, 15);
@@ -839,7 +839,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->search($term);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
     }
@@ -849,19 +849,19 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $dummies->slice(0, 5)
-                ->each(function ( $item )
+                ->each(function ($item)
                 {
                     $item->delete();
                 });
 
         $term = $dummies->first()->number;
 
-        $dummies = $dummies->merge($this->makeDummies(10, [ 'number' => $term ]));
+        $dummies = $dummies->merge($this->makeDummies(10, ['number' => $term]));
 
         $expected = collect();
 
-        foreach ( $dummies as $dummy )
-            if ( in_array($term, $dummy->toArray()) )
+        foreach ($dummies as $dummy)
+            if (in_array($term, $dummy->toArray()))
                 $expected->push($dummy);
 
         $expected = $expected->slice(0, 15);
@@ -869,7 +869,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->searchWithTrashed($term);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
                                                            ->toArray(), 'deleted_at'), $value->toArray());
     }
@@ -879,7 +879,7 @@ class RepositoryTest extends DbTestCase
         $dummies = $this->makeDummies();
 
         $deleted = $dummies->slice(0, 5)
-                           ->each(function ( $item )
+                           ->each(function ($item)
                            {
                                $item->delete();
                            });
@@ -888,9 +888,9 @@ class RepositoryTest extends DbTestCase
 
         $term = $dummies->first()->number;
 
-        $deleted = $deleted->each(function ( $item ) use ( $term )
+        $deleted = $deleted->each(function ($item) use ($term)
         {
-            if ( $item->number == $term )
+            if ($item->number == $term)
             {
                 $item->number = $this->faker->ean13;
 
@@ -898,12 +898,12 @@ class RepositoryTest extends DbTestCase
             }
         });
 
-        $dummies = $dummies->merge($this->makeDummies(10, [ 'number' => $term ]));
+        $dummies = $dummies->merge($this->makeDummies(10, ['number' => $term]));
 
         $expected = collect();
 
-        foreach ( $dummies as $dummy )
-            if ( in_array($term, $dummy->toArray()) )
+        foreach ($dummies as $dummy)
+            if (in_array($term, $dummy->toArray()))
                 $expected->push($dummy);
 
         $expected = $expected->slice(0, 15)
@@ -912,11 +912,11 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->search($term);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
         {
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
-            foreach ( $deleted as $model )
+            foreach ($deleted as $model)
                 $this->assertNotEquals(4, sizeof(array_intersect_assoc(array_except($model->toArray(), $model->getDates()), $value->toArray())));
         }
     }
@@ -927,12 +927,12 @@ class RepositoryTest extends DbTestCase
 
         $term = $dummies->first()->number;
 
-        $dummies = $dummies->merge($this->makeDummies(10, [ 'number' => $term ]));
+        $dummies = $dummies->merge($this->makeDummies(10, ['number' => $term]));
 
         $expected = collect();
 
-        foreach ( $dummies as $dummy )
-            if ( in_array($term, $dummy->toArray()) )
+        foreach ($dummies as $dummy)
+            if (in_array($term, $dummy->toArray()))
                 $expected->push($dummy);
 
 //        $expected = $expected->slice(0, 15);
@@ -944,7 +944,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->filter($request);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
     }
@@ -955,12 +955,12 @@ class RepositoryTest extends DbTestCase
 
         $term = $dummies->first()->number;
 
-        $dummies = $dummies->merge($this->makeDummies(10, [ 'number' => $term ]));
+        $dummies = $dummies->merge($this->makeDummies(10, ['number' => $term]));
 
         $expected = collect();
 
-        foreach ( $dummies as $dummy )
-            if ( in_array($term, $dummy->toArray()) )
+        foreach ($dummies as $dummy)
+            if (in_array($term, $dummy->toArray()))
                 $expected->push($dummy);
 
         $expected = $expected->sortByDesc('rank')
@@ -974,7 +974,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->filter($request, 'rank', 'desc');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
     }
@@ -985,12 +985,12 @@ class RepositoryTest extends DbTestCase
 
         $term = $dummies->first()->number;
 
-        $dummies = $dummies->merge($this->makeDummies(10, [ 'number' => $term ]));
+        $dummies = $dummies->merge($this->makeDummies(10, ['number' => $term]));
 
         $expected = collect();
 
-        foreach ( $dummies as $dummy )
-            if ( in_array($term, $dummy->toArray()) )
+        foreach ($dummies as $dummy)
+            if (in_array($term, $dummy->toArray()))
                 $expected->push($dummy);
 
 //        $expected = $expected->slice(0, 15);
@@ -1000,9 +1000,9 @@ class RepositoryTest extends DbTestCase
         $request->offsetSet('number', $term);
 
         $actual = $this->makeRepository()
-                       ->filter($request, null, 'asc', [ 'name' ]);
+                       ->filter($request, null, 'asc', ['name']);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_only($expected->get($key)
                                                          ->toArray(), 'name'), $value->toArray());
     }
@@ -1026,11 +1026,11 @@ class RepositoryTest extends DbTestCase
         $request->offsetSet('name', 'foo');
 
         $actual = $this->makeRepository()
-                       ->filter($request, null, 'asc', [ '*' ], false);
+                       ->filter($request, null, 'asc', ['*'], false);
 
         $this->assertEquals(1, sizeof($actual));
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
         {
             $this->assertArraySubset($expected->toArray(), $value->toArray());
 
@@ -1044,12 +1044,12 @@ class RepositoryTest extends DbTestCase
 
         $term = $dummies->first()->number;
 
-        $dummies = $dummies->merge($this->makeDummies(10, [ 'number' => $term ]));
+        $dummies = $dummies->merge($this->makeDummies(10, ['number' => $term]));
 
         $expected = collect();
 
-        foreach ( $dummies as $dummy )
-            if ( in_array($term, $dummy->toArray()) )
+        foreach ($dummies as $dummy)
+            if (in_array($term, $dummy->toArray()))
                 $expected->push($dummy);
 
         $expected = $expected->slice(0, 15);
@@ -1061,7 +1061,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->filterPaginated($request);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
     }
@@ -1072,12 +1072,12 @@ class RepositoryTest extends DbTestCase
 
         $term = $dummies->first()->number;
 
-        $dummies = $dummies->merge($this->makeDummies(10, [ 'number' => $term ]));
+        $dummies = $dummies->merge($this->makeDummies(10, ['number' => $term]));
 
         $expected = collect();
 
-        foreach ( $dummies as $dummy )
-            if ( in_array($term, $dummy->toArray()) )
+        foreach ($dummies as $dummy)
+            if (in_array($term, $dummy->toArray()))
                 $expected->push($dummy);
 
         $expected = $expected->sortByDesc('rank')
@@ -1091,7 +1091,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->filterPaginated($request, 15, 'rank', 'desc');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
     }
@@ -1102,12 +1102,12 @@ class RepositoryTest extends DbTestCase
 
         $term = $dummies->first()->number;
 
-        $dummies = $dummies->merge($this->makeDummies(10, [ 'number' => $term ]));
+        $dummies = $dummies->merge($this->makeDummies(10, ['number' => $term]));
 
         $expected = collect();
 
-        foreach ( $dummies as $dummy )
-            if ( in_array($term, $dummy->toArray()) )
+        foreach ($dummies as $dummy)
+            if (in_array($term, $dummy->toArray()))
                 $expected->push($dummy);
 
         $expected = $expected->slice(0, 15);
@@ -1117,9 +1117,9 @@ class RepositoryTest extends DbTestCase
         $request->offsetSet('number', $term);
 
         $actual = $this->makeRepository()
-                       ->filterPaginated($request, 15, null, 'asc', [ 'name' ]);
+                       ->filterPaginated($request, 15, null, 'asc', ['name']);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_only($expected->get($key)
                                                          ->toArray(), 'name'), $value->toArray());
     }
@@ -1143,11 +1143,11 @@ class RepositoryTest extends DbTestCase
         $request->offsetSet('name', 'foo');
 
         $actual = $this->makeRepository()
-                       ->filterPaginated($request, 15, null, 'asc', [ '*' ], false);
+                       ->filterPaginated($request, 15, null, 'asc', ['*'], false);
 
         $this->assertEquals(1, sizeof($actual));
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
         {
             $this->assertArraySubset($expected->toArray(), $value->toArray());
 
@@ -1157,7 +1157,7 @@ class RepositoryTest extends DbTestCase
 
     public function test_i_can_pages_of_10_filtered_results()
     {
-        $expected = $this->makeDummies(20, [ 'name' => $name = $this->faker->word ])
+        $expected = $this->makeDummies(20, ['name' => $name = $this->faker->word])
                          ->slice(0, 10)
                          ->values();
 
@@ -1168,7 +1168,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->filterPaginated($request, 10);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_only($expected->get($key)
                                                          ->toArray(), 'name'), $value->toArray());
 
@@ -1177,14 +1177,14 @@ class RepositoryTest extends DbTestCase
 
     public function test_i_can_get_a_paginated_set_of_filtered_results_with_a_page_name_of_foo()
     {
-        $this->makeDummies(20, [ 'name' => 'foo' ]);
+        $this->makeDummies(20, ['name' => 'foo']);
 
         $request = request();
 
         $request->offsetSet('name', 'foo');
 
         $actual = $this->makeRepository()
-                       ->filterPaginated($request, 15, null, 'asc', [ '*' ], 'foo');
+                       ->filterPaginated($request, 15, null, 'asc', ['*'], 'foo');
 
         $this->assertTrue($actual->getPageName() == 'foo');
     }
@@ -1230,7 +1230,7 @@ class RepositoryTest extends DbTestCase
         $to = \Carbon\Carbon::now()
                             ->subDay();
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1245,7 +1245,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetween($from, $to);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1261,7 +1261,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $this->makeDummies()
-             ->each(function ( &$dummy ) use ( $from, $to )
+             ->each(function (&$dummy) use ($from, $to)
              {
                  $dt = $this->faker->dateTimeBetween($from, $to);
                  $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1276,7 +1276,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetween();
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1292,7 +1292,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $this->makeDummies()
-             ->each(function ( &$dummy ) use ( $from, $to )
+             ->each(function (&$dummy) use ($from, $to)
              {
                  $dt = $this->faker->dateTimeBetween($from, $to);
                  $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1307,7 +1307,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetween(null, null, 'updated_at');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1323,7 +1323,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1338,7 +1338,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetween($from, $to, 'updated_at');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1354,7 +1354,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1367,9 +1367,9 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetween($from, $to, 'updated_at', [ 'name' ]);
+                       ->getDateBetween($from, $to, 'updated_at', ['name']);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_only($expected->get($key)
                                                          ->toArray(), 'name'), $value->toArray());
 
@@ -1385,7 +1385,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1400,9 +1400,9 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetween($from, $to, 'created_at', [ '*' ], 'rank', 'desc');
+                       ->getDateBetween($from, $to, 'created_at', ['*'], 'rank', 'desc');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1416,7 +1416,7 @@ class RepositoryTest extends DbTestCase
         $to = \Carbon\Carbon::now()
                             ->subDay();
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1432,7 +1432,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenPaginated($from, $to);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1448,7 +1448,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $this->makeDummies()
-             ->each(function ( &$dummy ) use ( $from, $to )
+             ->each(function (&$dummy) use ($from, $to)
              {
                  $dt = $this->faker->dateTimeBetween($from, $to);
                  $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1464,7 +1464,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenPaginated();
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1480,7 +1480,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $this->makeDummies()
-             ->each(function ( &$dummy ) use ( $from, $to )
+             ->each(function (&$dummy) use ($from, $to)
              {
                  $dt = $this->faker->dateTimeBetween($from, $to);
                  $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1495,7 +1495,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenPaginated(null, null, 'updated_at');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1511,7 +1511,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1527,7 +1527,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenPaginated($from, $to, 'updated_at');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1543,7 +1543,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
 
@@ -1560,9 +1560,9 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetweenPaginated($from, $to, 'updated_at', 15, null, 'asc', [ 'name' ]);
+                       ->getDateBetweenPaginated($from, $to, 'updated_at', 15, null, 'asc', ['name']);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_only($expected->get($key)
                                                          ->toArray(), 'name'), $value->toArray());
 
@@ -1578,7 +1578,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1594,9 +1594,9 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetweenPaginated($from, $to, 'created_at', 15, 'rank', 'desc', [ '*' ]);
+                       ->getDateBetweenPaginated($from, $to, 'created_at', 15, 'rank', 'desc', ['*']);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1612,7 +1612,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1629,7 +1629,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenPaginated($from, $to, 'created_at', 10);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1641,7 +1641,7 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetweenPaginated(null, null, 'created_at', 15, null, 'asc', [ '*' ], 'foo');
+                       ->getDateBetweenPaginated(null, null, 'created_at', 15, null, 'asc', ['*'], 'foo');
 
         $this->assertEquals('foo', $actual->getPageName());
     }
@@ -1655,7 +1655,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1666,7 +1666,7 @@ class RepositoryTest extends DbTestCase
                          });
 
         $expected->slice(5, 5)
-                 ->each(function ( &$item )
+                 ->each(function (&$item)
                  {
                      $item->delete();
                  });
@@ -1676,9 +1676,9 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenWithTrashed($from, $to);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), [ 'deleted_at', 'updated_at' ]), $value->toArray());
+                                                           ->toArray(), ['deleted_at', 'updated_at']), $value->toArray());
 
         $this->assertEquals(20, sizeof($actual));
     }
@@ -1692,7 +1692,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $this->makeDummies()
-             ->each(function ( &$dummy ) use ( $from, $to )
+             ->each(function (&$dummy) use ($from, $to)
              {
                  $dt = $this->faker->dateTimeBetween($from, $to);
                  $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1705,7 +1705,7 @@ class RepositoryTest extends DbTestCase
         $expected = $this->makeDummies();
 
         $expected->slice(5, 5)
-                 ->each(function ( &$item )
+                 ->each(function (&$item)
                  {
                      $item->delete();
                  });
@@ -1713,9 +1713,9 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenWithTrashed();
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), [ 'deleted_at', 'updated_at' ]), $value->toArray());
+                                                           ->toArray(), ['deleted_at', 'updated_at']), $value->toArray());
 
         $this->assertEquals(20, sizeof($actual));
     }
@@ -1729,7 +1729,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $this->makeDummies()
-             ->each(function ( &$dummy ) use ( $from, $to )
+             ->each(function (&$dummy) use ($from, $to)
              {
                  $dt = $this->faker->dateTimeBetween($from, $to);
                  $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1742,7 +1742,7 @@ class RepositoryTest extends DbTestCase
         $expected = $this->makeDummies();
 
         $expected->slice(5, 5)
-                 ->each(function ( &$item )
+                 ->each(function (&$item)
                  {
                      $item->delete();
                  });
@@ -1750,9 +1750,9 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenWithTrashed(null, null, 'updated_at');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), [ 'deleted_at', 'updated_at' ]), $value->toArray());
+                                                           ->toArray(), ['deleted_at', 'updated_at']), $value->toArray());
 
         $this->assertEquals(20, sizeof($actual));
     }
@@ -1767,7 +1767,7 @@ class RepositoryTest extends DbTestCase
 
         $expected = $this->makeDummies();
 
-        $expected->each(function ( &$dummy ) use ( $from, $to )
+        $expected->each(function (&$dummy) use ($from, $to)
         {
             $dt = $this->faker->dateTimeBetween($from, $to);
 
@@ -1777,7 +1777,7 @@ class RepositoryTest extends DbTestCase
             $dummy->updated_at = \Carbon\Carbon::instance($dt)
                                                ->toDateTimeString();
 
-            if ( $dummy->id % 5 == 0 )
+            if ($dummy->id % 5 == 0)
                 $dummy->deleted_at = \Carbon\Carbon::instance($dt)
                                                    ->toDateTimeString();
 
@@ -1790,9 +1790,9 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenWithTrashed($from, $to, 'updated_at');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), [ 'deleted_at', 'updated_at' ]), $value->toArray());
+                                                           ->toArray(), ['deleted_at', 'updated_at']), $value->toArray());
 
         $this->assertEquals(20, sizeof($actual));
     }
@@ -1806,7 +1806,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1817,7 +1817,7 @@ class RepositoryTest extends DbTestCase
                          });
 
         $expected->slice(5, 5)
-                 ->each(function ( &$item )
+                 ->each(function (&$item)
                  {
                      $item->delete();
                  });
@@ -1825,9 +1825,9 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetweenWithTrashed($from, $to, 'created_at', [ 'name' ]);
+                       ->getDateBetweenWithTrashed($from, $to, 'created_at', ['name']);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_only($expected->get($key)
                                                          ->toArray(), 'name'), $value->toArray());
 
@@ -1843,7 +1843,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1856,7 +1856,7 @@ class RepositoryTest extends DbTestCase
                          ->values();
 
         $expected->slice(5, 5)
-                 ->each(function ( &$item )
+                 ->each(function (&$item)
                  {
                      $item->delete();
                  });
@@ -1864,11 +1864,11 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetweenWithTrashed($from, $to, 'created_at', [ '*' ], 'rank', 'desc');
+                       ->getDateBetweenWithTrashed($from, $to, 'created_at', ['*'], 'rank', 'desc');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), [ 'deleted_at', 'updated_at' ]), $value->toArray());
+                                                           ->toArray(), ['deleted_at', 'updated_at']), $value->toArray());
 
         $this->assertEquals(20, sizeof($actual));
     }
@@ -1880,7 +1880,7 @@ class RepositoryTest extends DbTestCase
         $to = \Carbon\Carbon::now()
                             ->subDay();
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
 
@@ -1893,7 +1893,7 @@ class RepositoryTest extends DbTestCase
                          ->slice(0, 15);
 
         $expected->slice(5, 5)
-                 ->each(function ( $item )
+                 ->each(function ($item)
                  {
                      $item->delete();
                  });
@@ -1903,9 +1903,9 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenPaginatedWithTrashed($from, $to);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), [ 'updated_at', 'deleted_at' ]), $value->toArray());
+                                                           ->toArray(), ['updated_at', 'deleted_at']), $value->toArray());
 
         $this->assertEquals(20, $actual->total());
     }
@@ -1919,7 +1919,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $this->makeDummies()
-             ->each(function ( &$dummy ) use ( $from, $to )
+             ->each(function (&$dummy) use ($from, $to)
              {
                  $dt = $this->faker->dateTimeBetween($from, $to);
                  $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1933,7 +1933,7 @@ class RepositoryTest extends DbTestCase
                          ->slice(0, 15);
 
         $expected->slice(5, 5)
-                 ->each(function ( $item )
+                 ->each(function ($item)
                  {
                      $item->delete();
                  });
@@ -1941,7 +1941,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenPaginatedWithTrashed();
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1957,7 +1957,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $this->makeDummies()
-             ->each(function ( &$dummy ) use ( $from, $to )
+             ->each(function (&$dummy) use ($from, $to)
              {
                  $dt = $this->faker->dateTimeBetween($from, $to);
                  $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -1970,7 +1970,7 @@ class RepositoryTest extends DbTestCase
         $expected = $this->makeDummies();
 
         $expected->slice(5, 5)
-                 ->each(function ( $item )
+                 ->each(function ($item)
                  {
                      $item->delete();
                  });
@@ -1978,7 +1978,7 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenPaginatedWithTrashed(null, null, 'updated_at');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset($expected->get($key)
                                               ->toArray(), $value->toArray());
 
@@ -1994,14 +1994,14 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
                                                                 ->toDateTimeString();
                              $dummy->updated_at = \Carbon\Carbon::instance($dt)
                                                                 ->toDateTimeString();
-                             if ( $dummy->id % 5 == 0 )
+                             if ($dummy->id % 5 == 0)
                                  $dummy->deleted_at = \Carbon\Carbon::instance($dt)
                                                                     ->toDateTimeString();
                              $dummy->save();
@@ -2013,9 +2013,9 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenPaginatedWithTrashed($from, $to, 'updated_at');
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), [ 'updated_at', 'deleted_at' ]), $value->toArray());
+                                                           ->toArray(), ['updated_at', 'deleted_at']), $value->toArray());
 
         $this->assertEquals(20, $actual->total());
     }
@@ -2029,7 +2029,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
 
@@ -2044,7 +2044,7 @@ class RepositoryTest extends DbTestCase
                          ->slice(0, 15);
 
         $expected->slice(5, 5)
-                 ->each(function ( $item )
+                 ->each(function ($item)
                  {
                      $item->delete();
                  });
@@ -2052,9 +2052,9 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetweenPaginatedWithTrashed($from, $to, 'created_at', 15, null, 'asc', [ 'name' ]);
+                       ->getDateBetweenPaginatedWithTrashed($from, $to, 'created_at', 15, null, 'asc', ['name']);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_only($expected->get($key)
                                                          ->toArray(), 'name'), $value->toArray());
 
@@ -2070,7 +2070,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -2084,7 +2084,7 @@ class RepositoryTest extends DbTestCase
                          ->values();
 
         $expected->slice(5, 5)
-                 ->each(function ( $item )
+                 ->each(function ($item)
                  {
                      $item->delete();
                  });
@@ -2092,11 +2092,11 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetweenPaginatedWithTrashed($from, $to, 'created_at', 15, 'rank', 'desc', [ '*' ]);
+                       ->getDateBetweenPaginatedWithTrashed($from, $to, 'created_at', 15, 'rank', 'desc', ['*']);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), [ 'updated_at', 'deleted_at' ]), $value->toArray());
+                                                           ->toArray(), ['updated_at', 'deleted_at']), $value->toArray());
 
         $this->assertEquals(20, $actual->total());
     }
@@ -2110,7 +2110,7 @@ class RepositoryTest extends DbTestCase
                             ->subDay();
 
         $expected = $this->makeDummies()
-                         ->each(function ( &$dummy ) use ( $from, $to )
+                         ->each(function (&$dummy) use ($from, $to)
                          {
                              $dt = $this->faker->dateTimeBetween($from, $to);
                              $dummy->created_at = \Carbon\Carbon::instance($dt)
@@ -2123,7 +2123,7 @@ class RepositoryTest extends DbTestCase
                          ->values();
 
         $expected->slice(5, 5)
-                 ->each(function ( $item )
+                 ->each(function ($item)
                  {
                      $item->delete();
                  });
@@ -2133,9 +2133,9 @@ class RepositoryTest extends DbTestCase
         $actual = $this->makeRepository()
                        ->getDateBetweenPaginatedWithTrashed($from, $to, 'created_at', 10);
 
-        foreach ( $actual as $key => $value )
+        foreach ($actual as $key => $value)
             $this->assertArraySubset(array_except($expected->get($key)
-                                                           ->toArray(), [ 'updated_at', 'deleted_at' ]), $value->toArray());
+                                                           ->toArray(), ['updated_at', 'deleted_at']), $value->toArray());
 
         $this->assertEquals(20, $actual->total());
     }
@@ -2145,9 +2145,31 @@ class RepositoryTest extends DbTestCase
         $this->makeDummies();
 
         $actual = $this->makeRepository()
-                       ->getDateBetweenPaginatedWithTrashed(null, null, 'created_at', 15, null, 'asc', [ '*' ], 'foo');
+                       ->getDateBetweenPaginatedWithTrashed(null, null, 'created_at', 15, null, 'asc', ['*'], 'foo');
 
         $this->assertEquals('foo', $actual->getPageName());
+    }
+
+    public function test_i_can_use_an_array_of_parameters_to_filter()
+    {
+        $dummies = $this->makeDummies();
+
+        $term = $dummies->first()->number;
+
+        $dummies = $dummies->merge($this->makeDummies(10, ['number' => $term]));
+
+        $expected = collect();
+
+        foreach ($dummies as $dummy)
+            if (in_array($term, $dummy->toArray()))
+                $expected->push($dummy);
+
+        $actual = $this->makeRepository()
+                       ->filter(['number' => $term]);
+
+        foreach ($actual as $key => $value)
+            $this->assertArraySubset($expected->get($key)
+                                              ->toArray(), $value->toArray());
     }
 
     protected function makeRepository()
@@ -2155,11 +2177,11 @@ class RepositoryTest extends DbTestCase
         return new DummyRepository(new DummyModel());
     }
 
-    protected function makeDummies( $count = 20, $attributes = [] )
+    protected function makeDummies($count = 20, $attributes = [])
     {
         $dummies = collect();
 
-        for ( $i = 0; $i < $count; $i++ )
+        for ($i = 0; $i < $count; $i++)
             $dummies->push(DummyModel::create(array_replace($this->makeDummyAttributes(), $attributes)));
 
         return $count == 1 ? $dummies->first() : $dummies;

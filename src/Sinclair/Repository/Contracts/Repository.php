@@ -12,70 +12,71 @@ use Illuminate\Http\Request;
 
 /**
  * Interface Repository
+ *
  * @package Sinclair\Repository\Contracts
  */
 interface Repository
 {
     /**
-     * @param $query
+     * @param             $query
      * @param string|null $orderBy
-     * @param string $direction
+     * @param string      $direction
      *
      * @return mixed
      */
-    public function sort( &$query, $orderBy, $direction );
+    public function sort(&$query, $orderBy, $direction);
 
     /**
      * @param int $id
      *
      * @return Model
      */
-    public function getById( $id );
+    public function getById($id);
 
     /**
-     * @param array $columns
-     * @param null $orderBy
+     * @param array  $columns
+     * @param null   $orderBy
      * @param string $direction
      *
      * @return Collection
      */
-    public function getAll( $columns = [ '*' ], $orderBy = null, $direction = 'asc' );
+    public function getAll($columns = ['*'], $orderBy = null, $direction = 'asc');
 
     /**
-     * @param int $rows
-     * @param null $orderBy
+     * @param int    $rows
+     * @param null   $orderBy
      * @param string $direction
-     * @param array $columns
+     * @param array  $columns
      * @param string $pageName
      *
      * @return LengthAwarePaginator
      */
-    public function getAllPaginated( $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' );
+    public function getAllPaginated($rows = 15, $orderBy = null, $direction = 'asc', $columns = ['*'], $pageName = 'page');
 
     /**
-     * @param int $rows
-     * @param null $orderBy
+     * @param int    $rows
+     * @param null   $orderBy
      * @param string $direction
-     * @param array $columns
+     * @param array  $columns
      * @param string $pageName
      *
      * @return LengthAwarePaginator
      */
-    public function getAllPaginate( $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' );
+    public function getAllPaginate($rows = 15, $orderBy = null, $direction = 'asc', $columns = ['*'], $pageName = 'page');
 
     /**
      * @param array $attributes
      *
      * @return Model
      */
-    public function add( $attributes );
+    public function add($attributes);
 
     /**
      * @param string $name
      *
      * @return Model|null mixed
      */
-    public function getByName( $name );
+    public function getByName($name);
 
     /**
      * @param array $attributes
@@ -83,29 +84,29 @@ interface Repository
      *
      * @return Model
      */
-    public function update( $attributes, $model );
+    public function update($attributes, $model);
 
     /**
      * @param Model $model
      *
      * @return bool
      */
-    public function destroy( $model );
+    public function destroy($model);
 
     /**
-     * @param array $attributes
+     * @param array      $attributes
      * @param Model|null $model
      *
      * @return Model
      */
-    public function save( $attributes, $model = null );
+    public function save($attributes, $model = null);
 
     /**
      * @param array $attributes
      *
      * @return Model mixed
      */
-    public function firstOrCreate( $attributes );
+    public function firstOrCreate($attributes);
 
     /**
      * @param string $value
@@ -114,7 +115,7 @@ interface Repository
      *
      * @return array
      */
-    public function getArrayForSelect( $value = 'name', $key = 'id', $callback = 'ucwords' );
+    public function getArrayForSelect($value = 'name', $key = 'id', $callback = 'ucwords');
 
     /**
      * @param string $value
@@ -123,7 +124,7 @@ interface Repository
      *
      * @return array
      */
-    public function getArrayForSelectWithTrashed( $value = 'name', $key = 'id', $callback = 'ucwords' );
+    public function getArrayForSelectWithTrashed($value = 'name', $key = 'id', $callback = 'ucwords');
 
     /**
      * @param array $attributes
@@ -131,89 +132,89 @@ interface Repository
      *
      * @return array
      */
-    public function onlyFillable( $attributes, $model );
+    public function onlyFillable($attributes, $model);
 
     /**
      * @param int $id
      *
      * @return Model
      */
-    public function getByIdWithTrashed( $id );
+    public function getByIdWithTrashed($id);
 
     /**
-     * @param array $columns
-     * @param null $orderBy
+     * @param array  $columns
+     * @param null   $orderBy
      * @param string $direction
      *
      * @return Collection
      */
-    public function getAllWithTrashed( $columns = [ '*' ], $orderBy = null, $direction = 'asc' );
+    public function getAllWithTrashed($columns = ['*'], $orderBy = null, $direction = 'asc');
 
     /**
-     * @param int $rows
-     * @param null $orderBy
+     * @param int    $rows
+     * @param null   $orderBy
      * @param string $direction
      *
-     * @param array $columns
+     * @param array  $columns
      * @param string $pageName
      *
      * @return LengthAwarePaginator
      */
-    public function getAllPaginatedWithTrashed( $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' );
+    public function getAllPaginatedWithTrashed($rows = 15, $orderBy = null, $direction = 'asc', $columns = ['*'], $pageName = 'page');
 
     /**
      * @param Model $model
      *
      * @return Model
      */
-    public function restore( $model );
+    public function restore($model);
 
     /**
      * @param string $search
      *
      * @return LengthAwarePaginator
      */
-    public function search( $search );
+    public function search($search);
 
     /**
      * @param string $search
      *
      * @return LengthAwarePaginator
      */
-    public function searchWithTrashed( $search );
+    public function searchWithTrashed($search);
 
     /**
-     * @param Request $request
-     * @param string|null $orderBy
-     * @param string $direction
-     * @param array $columns
+     * @param Request|array $filters
+     * @param string|null   $orderBy
+     * @param string        $direction
+     * @param array         $columns
      *
-     * @param bool $search
+     * @param bool          $search
      *
      * @return Collection
      */
-    public function filter( Request $request, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $search = true );
+    public function filter($filters, $orderBy = null, $direction = 'asc', $columns = ['*'], $search = true);
 
     /**
-     * @param Request $request
-     * @param int $rows
-     * @param string|null $orderBy
-     * @param string $direction
-     * @param array $columns
-     * @param string $paginationName
+     * @param Request|array $filters
+     * @param int           $rows
+     * @param string|null   $orderBy
+     * @param string        $direction
+     * @param array         $columns
+     * @param string        $paginationName
      *
-     * @param bool $search
+     * @param bool          $search
      *
      * @return LengthAwarePaginator
      */
-    public function filterPaginated( Request $request, $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $paginationName = 'page', $search = true );
+    public function filterPaginated($filters, $rows = 15, $orderBy = null, $direction = 'asc', $columns = ['*'], $paginationName = 'page', $search = true);
 
     /**
      * @param Builder|\Illuminate\Database\Query\Builder $query
      *
      * @return Filterable
      */
-    public function setQuery( $query );
+    public function setQuery($query);
 
     /**
      * @return Builder|\Illuminate\Database\Query\Builder
@@ -225,7 +226,7 @@ interface Repository
      *
      * @return $this
      */
-    public function setModel( Model $model );
+    public function setModel(Model $model);
 
     /**
      * @return Model
@@ -235,52 +236,52 @@ interface Repository
     /**
      * @param Carbon|null $from
      * @param Carbon|null $to
-     * @param string $ts
-     * @param array $columns
-     * @param null $orderBy
-     * @param string $direction
+     * @param string      $ts
+     * @param array       $columns
+     * @param null        $orderBy
+     * @param string      $direction
      *
      * @return Collection
      */
-    public function getDateBetween( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $columns = [ '*' ], $orderBy = null, $direction = 'asc' );
+    public function getDateBetween(Carbon $from = null, Carbon $to = null, $ts = 'created_at', $columns = ['*'], $orderBy = null, $direction = 'asc');
 
     /**
      * @param Carbon|null $from
      * @param Carbon|null $to
-     * @param string $ts
-     * @param int $rows
-     * @param null $orderBy
-     * @param string $direction
-     * @param array $columns
-     * @param string $pageName
+     * @param string      $ts
+     * @param int         $rows
+     * @param null        $orderBy
+     * @param string      $direction
+     * @param array       $columns
+     * @param string      $pageName
      *
      * @return LengthAwarePaginator
      */
-    public function getDateBetweenPaginated( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' );
+    public function getDateBetweenPaginated(Carbon $from = null, Carbon $to = null, $ts = 'created_at', $rows = 15, $orderBy = null, $direction = 'asc', $columns = ['*'], $pageName = 'page');
 
     /**
      * @param Carbon|null $from
      * @param Carbon|null $to
-     * @param string $ts
-     * @param array $columns
-     * @param null $orderBy
-     * @param string $direction
+     * @param string      $ts
+     * @param array       $columns
+     * @param null        $orderBy
+     * @param string      $direction
      *
      * @return Collection
      */
-    public function getDateBetweenWithTrashed( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $columns = [ '*' ], $orderBy = null, $direction = 'asc' );
+    public function getDateBetweenWithTrashed(Carbon $from = null, Carbon $to = null, $ts = 'created_at', $columns = ['*'], $orderBy = null, $direction = 'asc');
 
     /**
      * @param Carbon|null $from
      * @param Carbon|null $to
-     * @param string $ts
-     * @param int $rows
-     * @param null $orderBy
-     * @param string $direction
-     * @param array $columns
-     * @param string $pageName
+     * @param string      $ts
+     * @param int         $rows
+     * @param null        $orderBy
+     * @param string      $direction
+     * @param array       $columns
+     * @param string      $pageName
      *
      * @return LengthAwarePaginator
      */
-    public function getDateBetweenPaginatedWithTrashed( Carbon $from = null, Carbon $to = null, $ts = 'created_at', $rows = 15, $orderBy = null, $direction = 'asc', $columns = [ '*' ], $pageName = 'page' );
+    public function getDateBetweenPaginatedWithTrashed(Carbon $from = null, Carbon $to = null, $ts = 'created_at', $rows = 15, $orderBy = null, $direction = 'asc', $columns = ['*'], $pageName = 'page');
 }
