@@ -13,11 +13,13 @@ class CreateDummiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('dummies', function (Blueprint $table) {
+        Schema::create('dummies', function (Blueprint $table)
+        {
             $table->increments('id');
             $table->string('name');
             $table->string('number');
             $table->string('rank');
+            $table->boolean('is_complete')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

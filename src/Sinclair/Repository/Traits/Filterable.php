@@ -77,7 +77,7 @@ trait Filterable
      */
     private function filterIsset($filters, $field)
     {
-        return in_array($field, $this->getModelFilters()) && !is_null(array_get($filters, $field, null)) && array_get($filters, $field, '') != '';
+        return in_array($field, $this->getModelFilters()) && !is_null(array_get($filters, $field, null)) && array_get($filters, $field, '') !== '';
     }
 
     /**

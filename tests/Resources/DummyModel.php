@@ -10,7 +10,7 @@ class DummyModel extends \Illuminate\Database\Eloquent\Model
     /**
      * @var array
      */
-    protected $fillable = [ 'name', 'number', 'rank' ];
+    protected $fillable = ['name', 'number', 'rank', 'is_complete'];
 
     /**
      * @var string
@@ -20,12 +20,12 @@ class DummyModel extends \Illuminate\Database\Eloquent\Model
     /**
      * @var array
      */
-    public $filters = [ 'name', 'number', 'rank' ];
+    public $filters = ['name', 'number', 'rank', 'complete'];
 
     /**
      * @var array
      */
-    protected $dates = [ 'deleted_at'];
+    protected $dates = ['deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -36,13 +36,13 @@ class DummyModel extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * @param $query
-     * @param $value
+     * @param      $query
+     * @param      $value
      * @param bool $trashed
      *
      * @return mixed
      */
-    public function scopeFilterName( $query, $value, $trashed = false )
+    public function scopeFilterName($query, $value, $trashed = false)
     {
         $query = $trashed ? $query->withTrashed() : $query;
 
@@ -50,13 +50,13 @@ class DummyModel extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * @param $query
-     * @param $value
+     * @param      $query
+     * @param      $value
      * @param bool $trashed
      *
      * @return mixed
      */
-    public function scopeFilterNumber( $query, $value, $trashed = false )
+    public function scopeFilterNumber($query, $value, $trashed = false)
     {
         $query = $trashed ? $query->withTrashed() : $query;
 
@@ -64,16 +64,30 @@ class DummyModel extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
-     * @param $query
-     * @param $value
+     * @param      $query
+     * @param      $value
      * @param bool $trashed
      *
      * @return mixed
      */
-    public function scopeFilterRank( $query, $value, $trashed = false )
+    public function scopeFilterRank($query, $value, $trashed = false)
     {
         $query = $trashed ? $query->withTrashed() : $query;
 
         return is_array($value) ? $query->whereIn('rank', $value) : $query->where('rank', $value);
+    }
+
+    /**
+     * @param      $query
+     * @param      $value
+     * @param bool $trashed
+     *
+     * @return mixed
+     */
+    public function scopeFilterComplete($query, $value, $trashed = false)
+    {
+        $query = $trashed ? $query->withTrashed() : $query;
+
+        return $query->where('is_complete', $value ? 1 : 0);
     }
 }

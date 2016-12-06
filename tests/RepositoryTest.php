@@ -2172,6 +2172,17 @@ class RepositoryTest extends DbTestCase
                                               ->toArray(), $value->toArray());
     }
 
+    public function test_i_can_send_through_a_negative_filter_value()
+    {
+        $this->makeDummies(10, ['is_complete' => false]);
+
+        $this->makeDummies(10, ['is_complete' => true]);
+
+        $actual = $this->makeRepository()->filter(['complete' => false]);
+
+        $this->assertCount(10, $actual);
+    }
+
     protected function makeRepository()
     {
         return new DummyRepository(new DummyModel());
