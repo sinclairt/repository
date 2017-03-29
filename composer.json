@@ -1,5 +1,5 @@
 {
-  "name": "sinclair/repository",
+  "name": "sinclairt/repository",
   "description": "Common queries wrapped up in a base repository class to be extended",
   "type": "library",
   "require": {},
@@ -25,12 +25,6 @@
   "scripts": {
     "phpunit": "./vendor/bin/phpunit;"
   },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://satis.ominor.com"
-    }
-  ],
   "config": {
     "preferred-install": "dist"
   }
