@@ -1,21 +1,10 @@
-# Sinclair Repository
+# Repository
 
 Common queries wrapped up into a class to be extended.
 
 ### Installation
 
-Add the following repository to your ``` composer.json ```. You will have access as long as you belong to the WTBI team on Bitbucket.
-
-``` sh
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "http://satis.wtbidev.co.uk"
-    }
-  ]
-```
-
-``` composer require sinclair/repository```
+``` composer require sinclairt/repository```
 
 ``` composer install ```
 
